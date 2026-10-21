@@ -19,13 +19,17 @@ persentase hasilnya.
   diubah sebelum dilanjutkan.
 - Kuis bertimer menampilkan jawaban soal aktif dengan animasi pop saat waktu
   total habis, lalu membuka halaman hasil.
-- Perpindahan antarsoal menggunakan animasi swap-shake tanpa mengatur ulang
-  waktu total.
+- Perpindahan antarsoal menggunakan animasi reveal bergelombang yang lembut
+  tanpa mengatur ulang waktu total.
 - Progres dan jawaban disimpan dalam `QuizProvider` selama sesi aplikasi.
 - Halaman hasil menampilkan skor, persentase, dan ringkasan benar/salah.
 - Tombol untuk memulai sesi baru.
 - Tata letak responsif untuk ponsel dan tablet.
-- Ikon Material Design dan font Manrope kustom.
+- Visual konsisten dengan latar netral, aksen biru, kartu jawaban yang jelas,
+  indikator progres, dan layar hasil yang mudah dibaca.
+- Ilustrasi PNG dan font Manrope lokal di folder `assets/`, sehingga aplikasi
+  tidak perlu mengunduh font dari internet saat dijalankan.
+- Ikon Material Design.
 
 ## Menjalankan Aplikasi
 
@@ -40,15 +44,17 @@ flutter run
 - `lib/providers/`: state sesi dan jawaban kuis.
 - `lib/screens/`: halaman nama, pilihan mode, kuis, dan hasil.
 - `lib/widgets/`: komponen UI yang digunakan ulang.
+- `assets/images/`: ilustrasi kartu kuis, doodle otak, dan badge menang/kalah.
+- `assets/fonts/`: font variabel Manrope beserta lisensi SIL Open Font License.
 
 ## Kredit Aset
 
 - Ikon: [Material Symbols / Material Design](https://fonts.google.com/icons),
   digunakan melalui ikon bawaan Flutter.
 - Font: [Manrope oleh Mikhail Sharanda](https://fonts.google.com/specimen/Manrope),
-  dimuat menggunakan paket `google_fonts`.
-- Ilustrasi: elemen dekoratif dibuat dari komponen Flutter; tidak memakai
-  gambar eksternal.
+  disertakan lokal di `assets/fonts/Manrope-Variable.ttf` dengan lisensi SIL
+  Open Font License (`assets/fonts/OFL.txt`).
+- Ilustrasi PNG: dibuat khusus untuk aplikasi dan disimpan di `assets/images/`.
 
 ## Dokumentasi
 

@@ -114,15 +114,8 @@ class _QuizScreenState extends State<QuizScreen> {
     final remaining = quiz.remainingQuizSeconds;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF7000B8),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF6500A8), Color(0xFF9B20C4), Color(0xFF7200B5)],
-          ),
-        ),
+      backgroundColor: paper,
+      body: QuizGameBackground(
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -140,17 +133,16 @@ class _QuizScreenState extends State<QuizScreen> {
                               onPressed: () => Navigator.of(context).pop(),
                               icon: const Icon(Icons.arrow_back_rounded),
                               style: IconButton.styleFrom(
-                                backgroundColor: Colors.white.withValues(
-                                  alpha: 0.14,
-                                ),
-                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.white,
+                                foregroundColor: ink,
+                                side: const BorderSide(color: lineColor),
                               ),
                             ),
                             const Spacer(),
                             const Text(
                               'RUANG KUIS',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: ink,
                                 fontSize: 15,
                                 letterSpacing: 1.3,
                                 fontWeight: FontWeight.w800,
@@ -162,13 +154,13 @@ class _QuizScreenState extends State<QuizScreen> {
                               height: 42,
                               alignment: Alignment.center,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFFC857),
+                                color: deepBlue,
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
                                 '${quiz.currentIndex + 1}',
                                 style: const TextStyle(
-                                  color: Color(0xFF5A2000),
+                                  color: Colors.white,
                                   fontSize: 19,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -192,7 +184,6 @@ class _QuizScreenState extends State<QuizScreen> {
                                 QuizProgressHeader(
                                   current: quiz.currentIndex + 1,
                                   total: quiz.questions.length,
-                                  onDark: true,
                                 ),
                                 if (duration != null) ...[
                                   const SizedBox(height: 14),
@@ -207,31 +198,46 @@ class _QuizScreenState extends State<QuizScreen> {
                                 Text(
                                   'Hai, ${quiz.userName}!',
                                   style: const TextStyle(
-                                    color: const Color(0xFFFFD66B),
+                                    color: mutedInk,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w800,
                                   ),
                                 ),
                                 const SizedBox(height: 11),
-                                Text(
-                                  question.questionText,
-                                  style: TextStyle(
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.fromLTRB(
+                                    20,
+                                    24,
+                                    20,
+                                    22,
+                                  ),
+                                  decoration: BoxDecoration(
                                     color: Colors.white,
-                                    fontSize: constraints.maxWidth < 380
-                                        ? 24
-                                        : 28,
-                                    height: 1.25,
-                                    letterSpacing: -0.8,
-                                    fontWeight: FontWeight.w800,
+                                    border: Border.all(color: lineColor),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    question.questionText,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: ink,
+                                      fontSize: constraints.maxWidth < 380
+                                          ? 21
+                                          : 24,
+                                      height: 1.25,
+                                      letterSpacing: -0.5,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 20),
                                 Text(
                                   _isRevealingAnswer
                                       ? 'Waktu habis! Ini jawaban yang benar.'
                                       : 'Pilih satu jawaban yang paling tepat.',
                                   style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.78),
+                                    color: mutedInk,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -259,7 +265,6 @@ class _QuizScreenState extends State<QuizScreen> {
                                         isSelected:
                                             quiz.selectedAnswer == index,
                                         isCorrect: isCorrect,
-                                        playful: true,
                                         onTap: _isRevealingAnswer
                                             ? () {}
                                             : () => context
@@ -341,7 +346,7 @@ class _CountdownIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUrgent = remaining <= 5;
-    final color = isUrgent ? const Color(0xFFFF6D75) : const Color(0xFF32D979);
+    final color = isUrgent ? const Color(0xFFD64545) : forest;
     return Column(
       children: [
         Row(
@@ -351,7 +356,7 @@ class _CountdownIndicator extends StatelessWidget {
             Text(
               'WAKTU KUIS TERSISA',
               style: TextStyle(
-                color: isUrgent ? color : Colors.white,
+                color: isUrgent ? color : ink,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1,
@@ -374,7 +379,7 @@ class _CountdownIndicator extends StatelessWidget {
           child: LinearProgressIndicator(
             value: duration == 0 ? 0 : remaining / duration,
             minHeight: 7,
-            backgroundColor: Colors.white.withValues(alpha: 0.22),
+            backgroundColor: lineColor,
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ),

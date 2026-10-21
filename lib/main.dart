@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
 import 'providers/quiz_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  GoogleFonts.config.allowRuntimeFetching = true;
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => QuizProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => QuizProvider())],
       child: const MyApp(),
     ),
   );
@@ -26,13 +23,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF7F6F1),
+        scaffoldBackgroundColor: const Color(0xFFF5F7FB),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF176B5B),
-          primary: const Color(0xFF176B5B),
-          surface: const Color(0xFFF7F6F1),
+          seedColor: const Color(0xFF356AE6),
+          primary: const Color(0xFF356AE6),
+          surface: const Color(0xFFF5F7FB),
+          error: const Color(0xFFD64545),
         ),
-        textTheme: GoogleFonts.manropeTextTheme(),
+        fontFamily: 'Manrope',
       ),
       home: const HomeScreen(),
     );

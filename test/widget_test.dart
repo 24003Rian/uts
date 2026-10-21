@@ -26,6 +26,15 @@ void main() {
 
     expect(find.text('Seberapa luas\nwawasanmu?'), findsOneWidget);
     expect(find.text('Kuis santai'), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image &&
+            widget.semanticLabel ==
+                'Ilustrasi kartu quiz berwarna putih dengan doodle',
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await tester.binding.setSurfaceSize(null);
   });
@@ -48,9 +57,16 @@ void main() {
     await tester.ensureVisible(find.text('Pilih mode kuis'));
     await tester.tap(find.text('Pilih mode kuis'));
     await tester.pumpAndSettle();
-
     expect(find.text('Kuis santai'), findsOneWidget);
     expect(find.text('Kuis dengan waktu'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image && widget.semanticLabel == 'Ilustrasi doodle otak',
+      ),
+      findsOneWidget,
+    );
+    await tester.ensureVisible(find.text('Mulai kuis'));
     await tester.tap(find.text('Mulai kuis'));
     await tester.pumpAndSettle();
 
@@ -87,6 +103,13 @@ void main() {
     expect(find.text('100%'), findsOneWidget);
     expect(find.text('6 dari 6 jawaban benar'), findsOneWidget);
     expect(find.text('Bagus sekali,\nNadia!'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image && widget.semanticLabel == 'Ilustrasi YOU WIN',
+      ),
+      findsOneWidget,
+    );
     await tester.binding.setSurfaceSize(null);
   });
 
@@ -105,6 +128,7 @@ void main() {
     await tester.tap(find.text('Pilih mode kuis'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('15 detik'));
+    await tester.ensureVisible(find.text('Mulai kuis'));
     await tester.tap(find.text('Mulai kuis'));
     await tester.pumpAndSettle();
 

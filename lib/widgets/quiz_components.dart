@@ -1,11 +1,53 @@
 import 'package:flutter/material.dart';
 
-const Color ink = Color(0xFF173D35);
-const Color forest = Color(0xFF176B5B);
-const Color mutedInk = Color(0xFF71807A);
-const Color paper = Color(0xFFF7F6F1);
-const Color lineColor = Color(0xFFE7E9E2);
-const Color mango = Color(0xFFF3B45B);
+const Color ink = Color(0xFF1D2D44);
+const Color forest = Color(0xFF356AE6);
+const Color mutedInk = Color(0xFF718096);
+const Color paper = Color(0xFFF5F7FB);
+const Color lineColor = Color(0xFFE2E8F0);
+const Color deepBlue = forest;
+
+class QuizGameBackground extends StatelessWidget {
+  const QuizGameBackground({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(color: paper),
+      child: Stack(
+        children: [
+          Positioned(
+            top: -100,
+            right: -90,
+            child: Container(
+              width: 240,
+              height: 240,
+              decoration: const BoxDecoration(
+                color: Color(0xFFEAF0FF),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -125,
+            left: -95,
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: const BoxDecoration(
+                color: Color(0xFFEDF4FF),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          child,
+        ],
+      ),
+    );
+  }
+}
 
 class BrandMark extends StatelessWidget {
   const BrandMark({super.key, this.compact = false});
@@ -21,13 +63,13 @@ class BrandMark extends StatelessWidget {
           width: compact ? 38 : 44,
           height: compact ? 38 : 44,
           decoration: BoxDecoration(
-            color: ink,
+            color: const Color(0xFFE8EEFF),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Icon(
             Icons.bubble_chart_rounded,
             size: compact ? 22 : 25,
-            color: mango,
+            color: forest,
           ),
         ),
         const SizedBox(width: 11),
@@ -64,12 +106,13 @@ class PrimaryActionButton extends StatelessWidget {
       child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: ink,
+          backgroundColor: forest,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: ink.withValues(alpha: 0.35),
-          padding: const EdgeInsets.symmetric(vertical: 17, horizontal: 20),
+          disabledBackgroundColor: forest.withValues(alpha: 0.45),
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(17),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
         child: Row(
@@ -100,12 +143,10 @@ class QuizProgressHeader extends StatelessWidget {
     required this.current,
     required this.total,
     super.key,
-    this.onDark = false,
   });
 
   final int current;
   final int total;
-  final bool onDark;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +158,7 @@ class QuizProgressHeader extends StatelessWidget {
             Text(
               'PERTANYAAN ${current.toString().padLeft(2, '0')}',
               style: TextStyle(
-                color: onDark ? Colors.white : forest,
+                color: ink,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.5,
@@ -127,7 +168,7 @@ class QuizProgressHeader extends StatelessWidget {
             Text(
               '$current dari $total',
               style: TextStyle(
-                color: onDark ? Colors.white.withValues(alpha: 0.75) : mutedInk,
+                color: mutedInk,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -140,12 +181,8 @@ class QuizProgressHeader extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 7,
-            backgroundColor: onDark
-                ? Colors.white.withValues(alpha: 0.22)
-                : lineColor,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              onDark ? const Color(0xFF32D979) : forest,
-            ),
+            backgroundColor: lineColor,
+            valueColor: AlwaysStoppedAnimation<Color>(forest),
           ),
         ),
       ],
@@ -161,7 +198,6 @@ class AnswerOptionCard extends StatelessWidget {
     required this.onTap,
     super.key,
     this.isCorrect = false,
-    this.playful = false,
   });
 
   final String label;
@@ -169,15 +205,10 @@ class AnswerOptionCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
   final bool isCorrect;
-  final bool playful;
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = isCorrect
-        ? const Color(0xFF18A957)
-        : playful
-        ? const Color(0xFFFF145A)
-        : forest;
+    final accentColor = isCorrect ? const Color(0xFF168A52) : forest;
     return Semantics(
       button: true,
       selected: isSelected || isCorrect,
@@ -185,10 +216,8 @@ class AnswerOptionCard extends StatelessWidget {
       child: Material(
         color: isCorrect
             ? const Color(0xFFE2F8EA)
-            : playful && isSelected
-            ? const Color(0xFFFFF0F5)
             : isSelected
-            ? const Color(0xFFE5F0E9)
+            ? const Color(0xFFEDF2FF)
             : Colors.white,
         borderRadius: BorderRadius.circular(17),
         child: InkWell(
@@ -200,12 +229,8 @@ class AnswerOptionCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(17),
               border: Border.all(
-                color: isCorrect || (playful && isSelected)
-                    ? accentColor
-                    : isSelected
-                    ? accentColor
-                    : lineColor,
-                width: isCorrect || isSelected ? 1.5 : 1,
+                color: isCorrect || isSelected ? accentColor : lineColor,
+                width: isCorrect || isSelected ? 1.7 : 1,
               ),
             ),
             child: Row(
@@ -217,20 +242,15 @@ class AnswerOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isCorrect
                         ? accentColor
-                        : playful
-                        ? const Color(0xFFFF145A)
                         : isSelected
                         ? accentColor
-                        : paper,
-                    shape: playful ? BoxShape.circle : BoxShape.rectangle,
-                    borderRadius: playful ? null : BorderRadius.circular(11),
+                        : const Color(0xFFF0F3F8),
+                    shape: BoxShape.circle,
                   ),
                   child: Text(
                     label,
                     style: TextStyle(
-                      color: isCorrect || isSelected || playful
-                          ? Colors.white
-                          : mutedInk,
+                      color: isCorrect || isSelected ? Colors.white : mutedInk,
                       fontWeight: FontWeight.w800,
                       fontSize: 13,
                     ),

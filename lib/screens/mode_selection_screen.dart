@@ -41,217 +41,248 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
     final canResume = _canResume(quiz);
 
     return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final horizontalPadding = constraints.maxWidth < 380 ? 22.0 : 28.0;
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 560),
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    horizontalPadding,
-                    16,
-                    horizontalPadding,
-                    24,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        tooltip: 'Kembali',
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.arrow_back_rounded),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: ink,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const BrandMark(),
-                      const SizedBox(height: 34),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(23),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF6D18A8),
-                          borderRadius: BorderRadius.circular(26),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'LANGKAH BERIKUTNYA',
-                              style: TextStyle(
-                                color: Color(0xFFFFD66B),
-                                fontSize: 10,
-                                letterSpacing: 1.5,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Hai, ${widget.playerName}!',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                height: 1.15,
-                                letterSpacing: -0.8,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Pilih cara bermain yang paling cocok untukmu.',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
-                                fontSize: 13,
-                                height: 1.45,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      const Text(
-                        'Pilih mode kuis',
-                        style: TextStyle(
-                          color: ink,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 7),
-                      const Text(
-                        'Kamu bisa bermain santai atau melawan waktu.',
-                        style: TextStyle(color: mutedInk, fontSize: 13),
-                      ),
-                      const SizedBox(height: 18),
-                      _ModeCard(
-                        title: 'Kuis santai',
-                        subtitle: 'Jawab tanpa batas waktu',
-                        detail: 'Nikmati setiap soal dengan ritmemu sendiri.',
-                        icon: Icons.self_improvement_rounded,
-                        isSelected: _selectedDurationSeconds == null,
-                        onTap: () =>
-                            setState(() => _selectedDurationSeconds = null),
-                      ),
-                      const SizedBox(height: 13),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: _selectedDurationSeconds != null
-                                ? const Color(0xFF6D18A8)
-                                : lineColor,
-                            width: _selectedDurationSeconds != null ? 2 : 1,
+      backgroundColor: paper,
+      body: QuizGameBackground(
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final horizontalPadding = constraints.maxWidth < 380
+                  ? 22.0
+                  : 28.0;
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      16,
+                      horizontalPadding,
+                      24,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          tooltip: 'Kembali',
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.arrow_back_rounded),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: ink,
+                            side: const BorderSide(color: lineColor),
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: () => setState(
-                                () => _selectedDurationSeconds ??= 15,
+                        const SizedBox(height: 16),
+                        const BrandMark(),
+                        const SizedBox(height: 34),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(23),
+                          decoration: BoxDecoration(
+                            color: deepBlue,
+                            borderRadius: BorderRadius.circular(26),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'LANGKAH BERIKUTNYA',
+                                style: TextStyle(
+                                  color: const Color(0xFFFFD98A),
+                                  fontSize: 10,
+                                  letterSpacing: 1.5,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
-                              child: Row(
+                              const SizedBox(height: 12),
+                              Row(
                                 children: [
-                                  Container(
-                                    width: 43,
-                                    height: 43,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFFFF0D8),
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                    child: const Icon(
-                                      Icons.bolt_rounded,
-                                      color: Color(0xFFE89A16),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
+                                  Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Kuis dengan waktu',
-                                          style: TextStyle(
-                                            color: ink,
-                                            fontSize: 14,
+                                          'Hai, ${widget.playerName}!',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 25,
+                                            height: 1.15,
+                                            letterSpacing: -0.8,
                                             fontWeight: FontWeight.w800,
                                           ),
                                         ),
-                                        SizedBox(height: 3),
+                                        const SizedBox(height: 8),
                                         Text(
-                                          'Batas waktu untuk menyelesaikan seluruh soal',
+                                          'Pilih cara bermain yang paling cocok untukmu.',
                                           style: TextStyle(
-                                            color: mutedInk,
-                                            fontSize: 12,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                            fontSize: 13,
+                                            height: 1.45,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  Icon(
-                                    _selectedDurationSeconds != null
-                                        ? Icons.radio_button_checked_rounded
-                                        : Icons.radio_button_off_rounded,
-                                    color: _selectedDurationSeconds != null
-                                        ? const Color(0xFF6D18A8)
-                                        : mutedInk,
+                                  const SizedBox(width: 8),
+                                  Image.asset(
+                                    'assets/images/brain_doodle.png',
+                                    width: 82,
+                                    height: 76,
+                                    fit: BoxFit.contain,
+                                    semanticLabel: 'Ilustrasi doodle otak',
                                   ),
                                 ],
                               ),
-                            ),
-                            const SizedBox(height: 15),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [15, 30, 60, 120]
-                                  .map(
-                                    (seconds) => _DurationChoice(
-                                      seconds: seconds,
-                                      isSelected:
-                                          _selectedDurationSeconds == seconds,
-                                      onTap: () => setState(
-                                        () =>
-                                            _selectedDurationSeconds = seconds,
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 26),
-                      PrimaryActionButton(
-                        label: canResume ? 'Lanjutkan kuis' : 'Mulai kuis',
-                        onPressed: _startQuiz,
-                      ),
-                      const SizedBox(height: 14),
-                      Center(
-                        child: Text(
-                          '${quiz.questions.length} soal pilihan ganda',
-                          style: const TextStyle(
-                            color: mutedInk,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 28),
+                        const Text(
+                          'Pilih mode kuis',
+                          style: TextStyle(
+                            color: ink,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        Text(
+                          'Kamu bisa bermain santai atau melawan waktu.',
+                          style: TextStyle(
+                            color: mutedInk,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        _ModeCard(
+                          title: 'Kuis santai',
+                          subtitle: 'Jawab tanpa batas waktu',
+                          detail: 'Nikmati setiap soal dengan ritmemu sendiri.',
+                          icon: Icons.self_improvement_rounded,
+                          isSelected: _selectedDurationSeconds == null,
+                          onTap: () =>
+                              setState(() => _selectedDurationSeconds = null),
+                        ),
+                        const SizedBox(height: 13),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: _selectedDurationSeconds != null
+                                  ? deepBlue
+                                  : lineColor,
+                              width: _selectedDurationSeconds != null ? 1.7 : 1,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                borderRadius: BorderRadius.circular(12),
+                                onTap: () => setState(
+                                  () => _selectedDurationSeconds ??= 15,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 43,
+                                      height: 43,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFF4D6),
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      child: const Icon(
+                                        Icons.bolt_rounded,
+                                        color: deepBlue,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Kuis dengan waktu',
+                                            style: TextStyle(
+                                              color: ink,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                          SizedBox(height: 3),
+                                          Text(
+                                            'Batas waktu untuk menyelesaikan seluruh soal',
+                                            style: TextStyle(
+                                              color: mutedInk,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Icon(
+                                      _selectedDurationSeconds != null
+                                          ? Icons.radio_button_checked_rounded
+                                          : Icons.radio_button_off_rounded,
+                                      color: _selectedDurationSeconds != null
+                                          ? deepBlue
+                                          : mutedInk,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [15, 30, 60, 120]
+                                    .map(
+                                      (seconds) => _DurationChoice(
+                                        seconds: seconds,
+                                        isSelected:
+                                            _selectedDurationSeconds == seconds,
+                                        onTap: () => setState(
+                                          () => _selectedDurationSeconds =
+                                              seconds,
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 26),
+                        PrimaryActionButton(
+                          label: canResume ? 'Lanjutkan kuis' : 'Mulai kuis',
+                          onPressed: _startQuiz,
+                        ),
+                        const SizedBox(height: 14),
+                        Center(
+                          child: Text(
+                            '${quiz.questions.length} soal pilihan ganda',
+                            style: const TextStyle(
+                              color: mutedInk,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -290,8 +321,8 @@ class _ModeCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? const Color(0xFF6D18A8) : lineColor,
-              width: isSelected ? 2 : 1,
+              color: isSelected ? deepBlue : lineColor,
+              width: isSelected ? 1.7 : 1,
             ),
           ),
           child: Row(
@@ -300,7 +331,7 @@ class _ModeCard extends StatelessWidget {
                 width: 43,
                 height: 43,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE5F0E9),
+                  color: const Color(0xFFE8EEFF),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(icon, color: forest),
@@ -340,7 +371,7 @@ class _ModeCard extends StatelessWidget {
                 isSelected
                     ? Icons.radio_button_checked_rounded
                     : Icons.radio_button_off_rounded,
-                color: isSelected ? const Color(0xFF6D18A8) : mutedInk,
+                color: isSelected ? deepBlue : mutedInk,
               ),
             ],
           ),
@@ -373,8 +404,8 @@ class _DurationChoice extends StatelessWidget {
         fontWeight: FontWeight.w800,
       ),
       backgroundColor: paper,
-      selectedColor: const Color(0xFF6D18A8),
-      side: BorderSide(color: isSelected ? const Color(0xFF6D18A8) : lineColor),
+      selectedColor: deepBlue,
+      side: BorderSide(color: isSelected ? deepBlue : lineColor),
       showCheckmark: false,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
     );
