@@ -100,10 +100,12 @@ class QuizProgressHeader extends StatelessWidget {
     required this.current,
     required this.total,
     super.key,
+    this.onDark = false,
   });
 
   final int current;
   final int total;
+  final bool onDark;
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +116,8 @@ class QuizProgressHeader extends StatelessWidget {
           children: [
             Text(
               'PERTANYAAN ${current.toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                color: forest,
+              style: TextStyle(
+                color: onDark ? Colors.white : forest,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.5,
@@ -124,8 +126,8 @@ class QuizProgressHeader extends StatelessWidget {
             const Spacer(),
             Text(
               '$current dari $total',
-              style: const TextStyle(
-                color: mutedInk,
+              style: TextStyle(
+                color: onDark ? Colors.white.withValues(alpha: 0.75) : mutedInk,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -138,8 +140,12 @@ class QuizProgressHeader extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 7,
-            backgroundColor: lineColor,
-            valueColor: const AlwaysStoppedAnimation<Color>(forest),
+            backgroundColor: onDark
+                ? Colors.white.withValues(alpha: 0.22)
+                : lineColor,
+            valueColor: AlwaysStoppedAnimation<Color>(
+              onDark ? const Color(0xFF32D979) : forest,
+            ),
           ),
         ),
       ],
@@ -154,21 +160,36 @@ class AnswerOptionCard extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     super.key,
+    this.isCorrect = false,
+    this.playful = false,
   });
 
   final String label;
   final String text;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isCorrect;
+  final bool playful;
 
   @override
   Widget build(BuildContext context) {
+    final accentColor = isCorrect
+        ? const Color(0xFF18A957)
+        : playful
+        ? const Color(0xFFFF145A)
+        : forest;
     return Semantics(
       button: true,
-      selected: isSelected,
+      selected: isSelected || isCorrect,
       label: 'Pilihan $label: $text',
       child: Material(
-        color: isSelected ? const Color(0xFFE5F0E9) : Colors.white,
+        color: isCorrect
+            ? const Color(0xFFE2F8EA)
+            : playful && isSelected
+            ? const Color(0xFFFFF0F5)
+            : isSelected
+            ? const Color(0xFFE5F0E9)
+            : Colors.white,
         borderRadius: BorderRadius.circular(17),
         child: InkWell(
           onTap: onTap,
@@ -179,8 +200,12 @@ class AnswerOptionCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(17),
               border: Border.all(
-                color: isSelected ? forest : lineColor,
-                width: isSelected ? 1.5 : 1,
+                color: isCorrect || (playful && isSelected)
+                    ? accentColor
+                    : isSelected
+                    ? accentColor
+                    : lineColor,
+                width: isCorrect || isSelected ? 1.5 : 1,
               ),
             ),
             child: Row(
@@ -190,13 +215,22 @@ class AnswerOptionCard extends StatelessWidget {
                   height: 34,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isSelected ? forest : paper,
-                    borderRadius: BorderRadius.circular(11),
+                    color: isCorrect
+                        ? accentColor
+                        : playful
+                        ? const Color(0xFFFF145A)
+                        : isSelected
+                        ? accentColor
+                        : paper,
+                    shape: playful ? BoxShape.circle : BoxShape.rectangle,
+                    borderRadius: playful ? null : BorderRadius.circular(11),
                   ),
                   child: Text(
                     label,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : mutedInk,
+                      color: isCorrect || isSelected || playful
+                          ? Colors.white
+                          : mutedInk,
                       fontWeight: FontWeight.w800,
                       fontSize: 13,
                     ),
@@ -210,16 +244,16 @@ class AnswerOptionCard extends StatelessWidget {
                       color: ink,
                       fontSize: 14,
                       height: 1.35,
-                      fontWeight: isSelected
+                      fontWeight: isSelected || isCorrect
                           ? FontWeight.w800
                           : FontWeight.w600,
                     ),
                   ),
                 ),
-                if (isSelected)
-                  const Icon(
+                if (isSelected || isCorrect)
+                  Icon(
                     Icons.check_circle_rounded,
-                    color: forest,
+                    color: accentColor,
                     size: 21,
                   ),
               ],

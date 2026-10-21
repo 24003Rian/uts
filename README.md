@@ -12,9 +12,15 @@ persentase hasilnya.
 
 ## Fitur
 
-- Halaman awal dengan validasi nama pemain.
+- Halaman awal untuk memasukkan dan memvalidasi nama pemain.
+- Halaman pilihan mode setelah nama dimasukkan: kuis santai atau kuis dengan
+  timer total 15, 30, 60, atau 120 detik untuk menyelesaikan seluruh soal.
 - Kuis pilihan ganda dengan indikator progres dan pilihan jawaban yang dapat
   diubah sebelum dilanjutkan.
+- Kuis bertimer menampilkan jawaban soal aktif dengan animasi pop saat waktu
+  total habis, lalu membuka halaman hasil.
+- Perpindahan antarsoal menggunakan animasi swap-shake tanpa mengatur ulang
+  waktu total.
 - Progres dan jawaban disimpan dalam `QuizProvider` selama sesi aplikasi.
 - Halaman hasil menampilkan skor, persentase, dan ringkasan benar/salah.
 - Tombol untuk memulai sesi baru.
@@ -32,7 +38,7 @@ flutter run
 
 - `lib/models/`: model pertanyaan dan data kuis lokal.
 - `lib/providers/`: state sesi dan jawaban kuis.
-- `lib/screens/`: halaman awal, kuis, dan hasil.
+- `lib/screens/`: halaman nama, pilihan mode, kuis, dan hasil.
 - `lib/widgets/`: komponen UI yang digunakan ulang.
 
 ## Kredit Aset
@@ -61,7 +67,7 @@ Tambahkan screenshot aplikasi setelah dijalankan:
 ## Rencana Demo Presentasi (5 Menit)
 
 1. **0:00–0:45** — Perkenalkan tujuan dan tampilan halaman beranda.
-2. **0:45–1:30** — Masukkan nama, tunjukkan validasi, lalu mulai kuis.
+2. **0:45–1:30** — Masukkan nama, pilih mode kuis, lalu mulai.
 3. **1:30–3:00** — Jawab beberapa soal dan perlihatkan progres serta pilihan
    yang tetap tersimpan saat berpindah halaman atau orientasi.
 4. **3:00–3:45** — Selesaikan kuis dan jelaskan skor pada halaman hasil.

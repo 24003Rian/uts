@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../providers/quiz_provider.dart';
 import '../widgets/quiz_components.dart';
-import 'quiz_screen.dart';
+import 'mode_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,27 +20,18 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _startQuiz() {
+  void _continueToModes() {
     if (!_formKey.currentState!.validate()) return;
-    final quiz = context.read<QuizProvider>();
     final name = _nameController.text.trim();
-    final canResume =
-        quiz.userName == name && quiz.answeredCount > 0 && !quiz.isComplete;
-    if (!canResume) {
-      quiz.resetQuiz();
-      quiz.setUserName(name);
-    }
-    Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (_) => const QuizScreen()));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ModeSelectionScreen(playerName: name),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final quiz = context.watch<QuizProvider>();
-    final canResume =
-        quiz.userName == _nameController.text.trim() &&
-        quiz.answeredCount > 0 &&
-        !quiz.isComplete;
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -85,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onChanged: (_) => setState(() {}),
                           textCapitalization: TextCapitalization.words,
                           textInputAction: TextInputAction.go,
-                          onFieldSubmitted: (_) => _startQuiz(),
+                          onFieldSubmitted: (_) => _continueToModes(),
                           decoration: InputDecoration(
                             hintText: 'Nama lengkap',
                             prefixIcon: const Icon(
@@ -126,10 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 14),
                         PrimaryActionButton(
-                          label: canResume
-                              ? 'Lanjutkan kuis'
-                              : 'Mulai tantangan',
-                          onPressed: _startQuiz,
+                          label: 'Pilih mode kuis',
+                          onPressed: _continueToModes,
                         ),
                         const SizedBox(height: 18),
                         const Center(

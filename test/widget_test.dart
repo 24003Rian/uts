@@ -25,6 +25,7 @@ void main() {
     );
 
     expect(find.text('Seberapa luas\nwawasanmu?'), findsOneWidget);
+    expect(find.text('Kuis santai'), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.binding.setSurfaceSize(null);
   });
@@ -42,8 +43,15 @@ void main() {
 
     expect(find.text('Seberapa luas\nwawasanmu?'), findsOneWidget);
 
+    await tester.ensureVisible(find.byType(TextFormField));
     await tester.enterText(find.byType(TextFormField), 'Nadia');
-    await tester.tap(find.text('Mulai tantangan'));
+    await tester.ensureVisible(find.text('Pilih mode kuis'));
+    await tester.tap(find.text('Pilih mode kuis'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Kuis santai'), findsOneWidget);
+    expect(find.text('Kuis dengan waktu'), findsOneWidget);
+    await tester.tap(find.text('Mulai kuis'));
     await tester.pumpAndSettle();
 
     final firstQuestion = dummyQuestions.first;
@@ -79,6 +87,72 @@ void main() {
     expect(find.text('100%'), findsOneWidget);
     expect(find.text('6 dari 6 jawaban benar'), findsOneWidget);
     expect(find.text('Bagus sekali,\nNadia!'), findsOneWidget);
+    await tester.binding.setSurfaceSize(null);
+  });
+
+  testWidgets('timed quiz uses one total timer for all questions', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 900));
+    final quizProvider = QuizProvider();
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(value: quizProvider, child: const MyApp()),
+    );
+
+    await tester.ensureVisible(find.byType(TextFormField));
+    await tester.enterText(find.byType(TextFormField), 'Nadia');
+    await tester.ensureVisible(find.text('Pilih mode kuis'));
+    await tester.tap(find.text('Pilih mode kuis'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('15 detik'));
+    await tester.tap(find.text('Mulai kuis'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('WAKTU KUIS TERSISA'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+    expect(quizProvider.remainingQuizSeconds, 10);
+
+    final firstQuestion = dummyQuestions.first;
+    await tester.tap(
+      find.text(firstQuestion.options[firstQuestion.correctIndex]),
+    );
+    await tester.pump();
+    expect(quizProvider.selectedAnswer, firstQuestion.correctIndex);
+    expect(quizProvider.isComplete, isFalse);
+    await tester.ensureVisible(find.text('Lanjutkan'));
+    final nextButton = tester.widget<FilledButton>(
+      find.ancestor(
+        of: find.text('Lanjutkan'),
+        matching: find.byType(FilledButton),
+      ),
+    );
+    expect(nextButton.onPressed, isNotNull);
+    await tester.tap(find.text('Lanjutkan'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(quizProvider.currentIndex, 1);
+    expect(find.byType(ClipPath), findsWidgets);
+    final remainingAfterAdvance = quizProvider.remainingQuizSeconds!;
+    expect(remainingAfterAdvance, lessThan(15));
+    expect(remainingAfterAdvance, greaterThan(0));
+
+    await tester.pump(Duration(seconds: remainingAfterAdvance));
+    expect(find.text('Waktu habis! Ini jawaban yang benar.'), findsOneWidget);
+    expect(
+      find.text(dummyQuestions[1].options[dummyQuestions[1].correctIndex]),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<AnimatedScale>(find.byKey(const ValueKey<String>('1-1')))
+          .scale,
+      1.08,
+    );
+    expect(quizProvider.score, 1);
+    expect(quizProvider.currentIndex, 1);
+    await tester.pump(const Duration(milliseconds: 1250));
+    await tester.pumpAndSettle();
+    expect(find.text('17%'), findsOneWidget);
+    expect(find.text('1 dari 6 jawaban benar'), findsOneWidget);
     await tester.binding.setSurfaceSize(null);
   });
 }
