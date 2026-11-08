@@ -69,6 +69,9 @@ void main() {
     await tester.ensureVisible(find.text('Mulai kuis'));
     await tester.tap(find.text('Mulai kuis'));
     await tester.pumpAndSettle();
+    expect(find.text('Mau mengerjakan berapa soal?'), findsOneWidget);
+    await tester.tap(find.text('Mulai'));
+    await tester.pumpAndSettle();
 
     final firstQuestion = dummyQuestions.first;
     await tester.tap(
@@ -101,7 +104,12 @@ void main() {
     }
 
     expect(find.text('100%'), findsOneWidget);
-    expect(find.text('6 dari 6 jawaban benar'), findsOneWidget);
+    expect(
+      find.text(
+        '${dummyQuestions.length} dari ${dummyQuestions.length} jawaban benar',
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Bagus sekali,\nNadia!'), findsOneWidget);
     expect(
       find.byWidgetPredicate(
@@ -130,6 +138,9 @@ void main() {
     await tester.tap(find.text('15 detik'));
     await tester.ensureVisible(find.text('Mulai kuis'));
     await tester.tap(find.text('Mulai kuis'));
+    await tester.pumpAndSettle();
+    expect(find.text('Mau mengerjakan berapa soal?'), findsOneWidget);
+    await tester.tap(find.text('Mulai'));
     await tester.pumpAndSettle();
 
     expect(find.text('WAKTU KUIS TERSISA'), findsOneWidget);
@@ -175,8 +186,40 @@ void main() {
     expect(quizProvider.currentIndex, 1);
     await tester.pump(const Duration(milliseconds: 1250));
     await tester.pumpAndSettle();
-    expect(find.text('17%'), findsOneWidget);
-    expect(find.text('1 dari 6 jawaban benar'), findsOneWidget);
+    expect(
+      find.text('${(1 / dummyQuestions.length * 100).round()}%'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('1 dari ${dummyQuestions.length} jawaban benar'),
+      findsOneWidget,
+    );
+    await tester.binding.setSurfaceSize(null);
+  });
+
+  testWidgets('question count dialog starts a quiz with the selected count', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 900));
+    final quizProvider = QuizProvider();
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(value: quizProvider, child: const MyApp()),
+    );
+
+    await tester.enterText(find.byType(TextFormField), 'Nadia');
+    await tester.tap(find.text('Pilih mode kuis'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Mulai kuis'));
+    await tester.tap(find.text('Mulai kuis'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Maksimal 120 soal.'), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).last, '2');
+    await tester.tap(find.text('Mulai'));
+    await tester.pumpAndSettle();
+
+    expect(quizProvider.questionCount, 2);
+    expect(find.text('1 dari 2'), findsOneWidget);
     await tester.binding.setSurfaceSize(null);
   });
 }

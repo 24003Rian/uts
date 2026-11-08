@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: deepBlue,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: creamSurface,
                               contentPadding: const EdgeInsets.symmetric(
                                 vertical: 18,
                                 horizontal: 18,
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: 18),
                           const Text(
-                            '6 SOAL  ·  BANYAK KESERUAN',
+                            '30 SOAL  ·  BANYAK KESERUAN',
                             style: TextStyle(
                               color: mutedInk,
                               fontSize: 10,
@@ -169,7 +169,7 @@ class _QuizTitleCard extends StatelessWidget {
     return SizedBox(
       height: compact ? 190 : 230,
       child: Image.asset(
-        'assets/images/quiz_illustration.png',
+        'assets/images/quiz_illustration.jpg',
         fit: BoxFit.contain,
         semanticLabel: 'Ilustrasi kartu quiz berwarna putih dengan doodle',
       ),

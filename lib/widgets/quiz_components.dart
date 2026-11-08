@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 const Color ink = Color(0xFF1D2D44);
 const Color forest = Color(0xFF356AE6);
 const Color mutedInk = Color(0xFF718096);
-const Color paper = Color(0xFFF5F7FB);
-const Color lineColor = Color(0xFFE2E8F0);
+const Color paper = Color(0xFFFFF8E7);
+const Color creamSurface = Color(0xFFFFFCF3);
+const Color lineColor = Color(0xFFE8DDC7);
 const Color deepBlue = forest;
 
 class QuizGameBackground extends StatelessWidget {
@@ -42,9 +43,56 @@ class QuizGameBackground extends StatelessWidget {
               ),
             ),
           ),
+          const Positioned(
+            top: 105,
+            left: 18,
+            child: _BackgroundSpark(
+              icon: Icons.lightbulb_rounded,
+              color: Color(0xFFF0B429),
+              size: 22,
+            ),
+          ),
+          const Positioned(
+            top: 285,
+            right: 18,
+            child: _BackgroundSpark(
+              icon: Icons.auto_awesome_rounded,
+              color: Color(0xFF75A7F7),
+              size: 18,
+            ),
+          ),
+          const Positioned(
+            bottom: 90,
+            right: 30,
+            child: _BackgroundSpark(
+              icon: Icons.circle,
+              color: Color(0xFFF28B82),
+              size: 10,
+            ),
+          ),
           child,
         ],
       ),
+    );
+  }
+}
+
+class _BackgroundSpark extends StatelessWidget {
+  const _BackgroundSpark({
+    required this.icon,
+    required this.color,
+    required this.size,
+  });
+
+  final IconData icon;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: 0.65,
+      child: Icon(icon, color: color, size: size),
     );
   }
 }
@@ -185,6 +233,18 @@ class QuizProgressHeader extends StatelessWidget {
             valueColor: AlwaysStoppedAnimation<Color>(forest),
           ),
         ),
+        const SizedBox(height: 7),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            progress >= 1 ? 'Selesai!' : '${(progress * 100).round()}% selesai',
+            style: const TextStyle(
+              color: mutedInk,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -218,7 +278,7 @@ class AnswerOptionCard extends StatelessWidget {
             ? const Color(0xFFE2F8EA)
             : isSelected
             ? const Color(0xFFEDF2FF)
-            : Colors.white,
+            : creamSurface,
         borderRadius: BorderRadius.circular(17),
         child: InkWell(
           onTap: onTap,

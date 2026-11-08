@@ -23,14 +23,34 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
       quiz.answeredCount > 0 &&
       !quiz.isComplete;
 
-  void _startQuiz() {
+  Future<void> _startQuiz() async {
     final quiz = context.read<QuizProvider>();
-    if (!_canResume(quiz)) {
-      quiz.startQuiz(
-        name: widget.playerName,
-        durationSeconds: _selectedDurationSeconds,
-      );
+    if (_canResume(quiz)) {
+      _openQuiz();
+      return;
     }
+
+    final questionCount = await _askQuestionCount(quiz);
+    if (questionCount == null || !mounted) return;
+
+    quiz.startQuiz(
+      name: widget.playerName,
+      durationSeconds: _selectedDurationSeconds,
+      questionCount: questionCount,
+    );
+    _openQuiz();
+  }
+
+  Future<int?> _askQuestionCount(QuizProvider quiz) async {
+    return showDialog<int>(
+      context: context,
+      builder: (_) => _QuestionCountDialog(
+        availableQuestionCount: quiz.availableQuestionCount,
+      ),
+    );
+  }
+
+  void _openQuiz() {
     Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (_) => const QuizScreen()));
   }
@@ -67,7 +87,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                           onPressed: () => Navigator.of(context).pop(),
                           icon: const Icon(Icons.arrow_back_rounded),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white,
+                            backgroundColor: creamSurface,
                             foregroundColor: ink,
                             side: const BorderSide(color: lineColor),
                           ),
@@ -105,7 +125,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                         Text(
                                           'Hai, ${widget.playerName}!',
                                           style: const TextStyle(
-                                            color: Colors.white,
+                                            color: creamSurface,
                                             fontSize: 25,
                                             height: 1.15,
                                             letterSpacing: -0.8,
@@ -152,10 +172,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                         const SizedBox(height: 7),
                         Text(
                           'Kamu bisa bermain santai atau melawan waktu.',
-                          style: TextStyle(
-                            color: mutedInk,
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(color: mutedInk, fontSize: 13),
                         ),
                         const SizedBox(height: 18),
                         _ModeCard(
@@ -172,7 +189,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: creamSurface,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: _selectedDurationSeconds != null
@@ -289,6 +306,100 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
   }
 }
 
+class _QuestionCountDialog extends StatefulWidget {
+  const _QuestionCountDialog({required this.availableQuestionCount});
+
+  final int availableQuestionCount;
+
+  @override
+  State<_QuestionCountDialog> createState() => _QuestionCountDialogState();
+}
+
+class _QuestionCountDialogState extends State<_QuestionCountDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.availableQuestionCount
+        .clamp(1, QuizProvider.questionLimit)
+        .toString(),
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  int? _validatedCount() {
+    if (!_formKey.currentState!.validate()) return null;
+    return int.parse(_controller.text.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Mau mengerjakan berapa soal?'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Maksimal ${QuizProvider.questionLimit} soal. '
+              'Saat ini tersedia ${widget.availableQuestionCount} soal.',
+              style: const TextStyle(color: mutedInk, fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _controller,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              maxLength: QuizProvider.questionLimit.toString().length,
+              decoration: const InputDecoration(
+                labelText: 'Jumlah soal',
+                suffixText: 'soal',
+                border: OutlineInputBorder(),
+                counterText: '',
+              ),
+              validator: (value) {
+                final count = int.tryParse(value?.trim() ?? '');
+                if (count == null || count < 1) {
+                  return 'Masukkan jumlah minimal 1 soal.';
+                }
+                if (count > QuizProvider.questionLimit) {
+                  return 'Maksimal ${QuizProvider.questionLimit} soal.';
+                }
+                if (count > widget.availableQuestionCount) {
+                  return 'Soal yang tersedia hanya '
+                      '${widget.availableQuestionCount}.';
+                }
+                return null;
+              },
+              onFieldSubmitted: (_) {
+                final count = _validatedCount();
+                if (count != null) Navigator.of(context).pop(count);
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Batal'),
+        ),
+        FilledButton(
+          onPressed: () {
+            final count = _validatedCount();
+            if (count != null) Navigator.of(context).pop(count);
+          },
+          child: const Text('Mulai'),
+        ),
+      ],
+    );
+  }
+}
+
 class _ModeCard extends StatelessWidget {
   const _ModeCard({
     required this.title,
@@ -309,7 +420,7 @@ class _ModeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: creamSurface,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: onTap,

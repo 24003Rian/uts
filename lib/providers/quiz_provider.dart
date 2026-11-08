@@ -3,18 +3,23 @@ import 'package:flutter/material.dart';
 import '../models/question_model.dart';
 
 class QuizProvider with ChangeNotifier {
+  static const int questionLimit = 120;
+
   String _userName = '';
   int _currentIndex = 0;
   bool _isComplete = false;
   int? _questionDurationSeconds;
   int? _remainingQuizSeconds;
   final Map<int, int> _answers = {};
+  List<Question> _questions = dummyQuestions;
 
   String get userName => _userName;
   int get currentIndex => _currentIndex;
-  List<Question> get questions => dummyQuestions;
+  List<Question> get questions => _questions;
+  int get availableQuestionCount => dummyQuestions.length;
   int? get selectedAnswer => _answers[_currentIndex];
   int get answeredCount => _answers.length;
+  int get questionCount => _questions.length;
   int? get questionDurationSeconds => _questionDurationSeconds;
   int? get remainingQuizSeconds => _remainingQuizSeconds;
   bool get isTimed => _questionDurationSeconds != null;
@@ -23,18 +28,41 @@ class QuizProvider with ChangeNotifier {
       .length;
   bool get isComplete => _isComplete;
 
+  int? answerFor(int questionIndex) => _answers[questionIndex];
+
+  bool isAnswerCorrect(int questionIndex) {
+    final answer = answerFor(questionIndex);
+    return answer != null && questions[questionIndex].correctIndex == answer;
+  }
+
   void setUserName(String name) {
     _userName = name.trim();
     notifyListeners();
   }
 
-  void startQuiz({required String name, int? durationSeconds}) {
+  void startQuiz({
+    required String name,
+    int? durationSeconds,
+    int? questionCount,
+  }) {
+    final selectedQuestionCount = questionCount ?? availableQuestionCount;
+    if (selectedQuestionCount < 1 ||
+        selectedQuestionCount > questionLimit ||
+        selectedQuestionCount > availableQuestionCount) {
+      throw ArgumentError.value(
+        selectedQuestionCount,
+        'questionCount',
+        'Must be between 1 and $availableQuestionCount.',
+      );
+    }
+
     _answers.clear();
     _currentIndex = 0;
     _isComplete = false;
     _userName = name.trim();
     _questionDurationSeconds = durationSeconds;
     _remainingQuizSeconds = durationSeconds;
+    _questions = dummyQuestions.take(selectedQuestionCount).toList();
     notifyListeners();
   }
 

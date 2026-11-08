@@ -54,7 +54,10 @@ class _QuizScreenState extends State<QuizScreen> {
   void _revealCorrectAnswer() {
     if (_isRevealingAnswer) return;
     setState(() => _isRevealingAnswer = true);
-    _timer = Timer(const Duration(milliseconds: 1250), _showResultsAfterTimeout);
+    _timer = Timer(
+      const Duration(milliseconds: 1250),
+      _showResultsAfterTimeout,
+    );
   }
 
   void _showResultsAfterTimeout() {
@@ -133,7 +136,7 @@ class _QuizScreenState extends State<QuizScreen> {
                               onPressed: () => Navigator.of(context).pop(),
                               icon: const Icon(Icons.arrow_back_rounded),
                               style: IconButton.styleFrom(
-                                backgroundColor: Colors.white,
+                                backgroundColor: creamSurface,
                                 foregroundColor: ink,
                                 side: const BorderSide(color: lineColor),
                               ),
@@ -160,7 +163,7 @@ class _QuizScreenState extends State<QuizScreen> {
                               child: Text(
                                 '${quiz.currentIndex + 1}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: creamSurface,
                                   fontSize: 19,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -213,7 +216,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                     22,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: creamSurface,
                                     border: Border.all(color: lineColor),
                                     borderRadius: BorderRadius.circular(20),
                                   ),

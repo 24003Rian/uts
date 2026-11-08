@@ -23,11 +23,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF5F7FB),
+        scaffoldBackgroundColor: const Color(0xFFFFF8E7),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF356AE6),
           primary: const Color(0xFF356AE6),
-          surface: const Color(0xFFF5F7FB),
+          surface: const Color(0xFFFFF8E7),
           error: const Color(0xFFD64545),
         ),
         fontFamily: 'Manrope',
