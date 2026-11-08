@@ -23,14 +23,34 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
       quiz.answeredCount > 0 &&
       !quiz.isComplete;
 
-  void _startQuiz() {
+  Future<void> _startQuiz() async {
     final quiz = context.read<QuizProvider>();
-    if (!_canResume(quiz)) {
-      quiz.startQuiz(
-        name: widget.playerName,
-        durationSeconds: _selectedDurationSeconds,
-      );
+    if (_canResume(quiz)) {
+      _openQuiz();
+      return;
     }
+
+    final questionCount = await _askQuestionCount(quiz);
+    if (questionCount == null || !mounted) return;
+
+    quiz.startQuiz(
+      name: widget.playerName,
+      durationSeconds: _selectedDurationSeconds,
+      questionCount: questionCount,
+    );
+    _openQuiz();
+  }
+
+  Future<int?> _askQuestionCount(QuizProvider quiz) async {
+    return showDialog<int>(
+      context: context,
+      builder: (_) => _QuestionCountDialog(
+        availableQuestionCount: quiz.availableQuestionCount,
+      ),
+    );
+  }
+
+  void _openQuiz() {
     Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (_) => const QuizScreen()));
   }
@@ -39,9 +59,10 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
     final canResume = _canResume(quiz);
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: paper,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: QuizGameBackground(
         child: SafeArea(
           child: LayoutBuilder(
@@ -67,7 +88,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                           onPressed: () => Navigator.of(context).pop(),
                           icon: const Icon(Icons.arrow_back_rounded),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white,
+                            backgroundColor: creamSurface,
                             foregroundColor: ink,
                             side: const BorderSide(color: lineColor),
                           ),
@@ -88,7 +109,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                               const Text(
                                 'LANGKAH BERIKUTNYA',
                                 style: TextStyle(
-                                  color: const Color(0xFFFFD98A),
+                                  color: Color(0xFFFFD98A),
                                   fontSize: 10,
                                   letterSpacing: 1.5,
                                   fontWeight: FontWeight.w800,
@@ -105,7 +126,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                         Text(
                                           'Hai, ${widget.playerName}!',
                                           style: const TextStyle(
-                                            color: Colors.white,
+                                            color: creamSurface,
                                             fontSize: 25,
                                             height: 1.15,
                                             letterSpacing: -0.8,
@@ -127,12 +148,16 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Image.asset(
-                                    'assets/images/brain_doodle.png',
-                                    width: 82,
-                                    height: 76,
-                                    fit: BoxFit.contain,
-                                    semanticLabel: 'Ilustrasi doodle otak',
+                                  Flexible(
+                                    flex: 2,
+                                    child: AspectRatio(
+                                      aspectRatio: 1.1,
+                                      child: Image.asset(
+                                        'assets/images/brain_doodle.png',
+                                        fit: BoxFit.contain,
+                                        semanticLabel: 'Ilustrasi doodle otak',
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -140,10 +165,10 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        const Text(
+                        Text(
                           'Pilih mode kuis',
                           style: TextStyle(
-                            color: ink,
+                            color: scheme.onSurface,
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
@@ -153,7 +178,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                         Text(
                           'Kamu bisa bermain santai atau melawan waktu.',
                           style: TextStyle(
-                            color: mutedInk,
+                            color: scheme.onSurfaceVariant,
                             fontSize: 13,
                           ),
                         ),
@@ -172,12 +197,12 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: scheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: _selectedDurationSeconds != null
-                                  ? deepBlue
-                                  : lineColor,
+                                  ? scheme.primary
+                                  : scheme.outlineVariant,
                               width: _selectedDurationSeconds != null ? 1.7 : 1,
                             ),
                           ),
@@ -195,16 +220,16 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                       width: 43,
                                       height: 43,
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFFFF4D6),
+                                        color: scheme.secondaryContainer,
                                         borderRadius: BorderRadius.circular(14),
                                       ),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.bolt_rounded,
-                                        color: deepBlue,
+                                        color: scheme.primary,
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                    const Expanded(
+                                    Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -212,7 +237,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                           Text(
                                             'Kuis dengan waktu',
                                             style: TextStyle(
-                                              color: ink,
+                                              color: scheme.onSurface,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w800,
                                             ),
@@ -221,7 +246,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                           Text(
                                             'Batas waktu untuk menyelesaikan seluruh soal',
                                             style: TextStyle(
-                                              color: mutedInk,
+                                              color: scheme.onSurfaceVariant,
                                               fontSize: 12,
                                             ),
                                           ),
@@ -233,8 +258,8 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                           ? Icons.radio_button_checked_rounded
                                           : Icons.radio_button_off_rounded,
                                       color: _selectedDurationSeconds != null
-                                          ? deepBlue
-                                          : mutedInk,
+                                          ? scheme.primary
+                                          : scheme.onSurfaceVariant,
                                     ),
                                   ],
                                 ),
@@ -269,8 +294,8 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                         Center(
                           child: Text(
                             '${quiz.questions.length} soal pilihan ganda',
-                            style: const TextStyle(
-                              color: mutedInk,
+                            style: TextStyle(
+                              color: scheme.onSurfaceVariant,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -285,6 +310,103 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _QuestionCountDialog extends StatefulWidget {
+  const _QuestionCountDialog({required this.availableQuestionCount});
+
+  final int availableQuestionCount;
+
+  @override
+  State<_QuestionCountDialog> createState() => _QuestionCountDialogState();
+}
+
+class _QuestionCountDialogState extends State<_QuestionCountDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.availableQuestionCount
+        .clamp(1, QuizProvider.questionLimit)
+        .toString(),
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  int? _validatedCount() {
+    if (!_formKey.currentState!.validate()) return null;
+    return int.parse(_controller.text.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Mau mengerjakan berapa soal?'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Maksimal ${QuizProvider.questionLimit} soal. '
+              'Saat ini tersedia ${widget.availableQuestionCount} soal.',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _controller,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              maxLength: QuizProvider.questionLimit.toString().length,
+              decoration: const InputDecoration(
+                labelText: 'Jumlah soal',
+                suffixText: 'soal',
+                border: OutlineInputBorder(),
+                counterText: '',
+              ),
+              validator: (value) {
+                final count = int.tryParse(value?.trim() ?? '');
+                if (count == null || count < 1) {
+                  return 'Masukkan jumlah minimal 1 soal.';
+                }
+                if (count > QuizProvider.questionLimit) {
+                  return 'Maksimal ${QuizProvider.questionLimit} soal.';
+                }
+                if (count > widget.availableQuestionCount) {
+                  return 'Soal yang tersedia hanya '
+                      '${widget.availableQuestionCount}.';
+                }
+                return null;
+              },
+              onFieldSubmitted: (_) {
+                final count = _validatedCount();
+                if (count != null) Navigator.of(context).pop(count);
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Batal'),
+        ),
+        FilledButton(
+          onPressed: () {
+            final count = _validatedCount();
+            if (count != null) Navigator.of(context).pop(count);
+          },
+          child: const Text('Mulai'),
+        ),
+      ],
     );
   }
 }
@@ -308,8 +430,9 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: Colors.white,
+      color: scheme.surfaceContainer,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: onTap,
@@ -321,7 +444,7 @@ class _ModeCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? deepBlue : lineColor,
+              color: isSelected ? scheme.primary : scheme.outlineVariant,
               width: isSelected ? 1.7 : 1,
             ),
           ),
@@ -331,10 +454,10 @@ class _ModeCard extends StatelessWidget {
                 width: 43,
                 height: 43,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8EEFF),
+                  color: scheme.primaryContainer,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: forest),
+                child: Icon(icon, color: scheme.primary),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -343,8 +466,8 @@ class _ModeCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: ink,
+                      style: TextStyle(
+                        color: scheme.onSurface,
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
                       ),
@@ -352,13 +475,16 @@ class _ModeCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       subtitle,
-                      style: const TextStyle(color: mutedInk, fontSize: 12),
+                      style: TextStyle(
+                        color: scheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                     const SizedBox(height: 7),
                     Text(
                       detail,
-                      style: const TextStyle(
-                        color: mutedInk,
+                      style: TextStyle(
+                        color: scheme.onSurfaceVariant,
                         fontSize: 11,
                         height: 1.35,
                       ),
@@ -371,7 +497,7 @@ class _ModeCard extends StatelessWidget {
                 isSelected
                     ? Icons.radio_button_checked_rounded
                     : Icons.radio_button_off_rounded,
-                color: isSelected ? deepBlue : mutedInk,
+                color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
               ),
             ],
           ),
@@ -394,18 +520,21 @@ class _DurationChoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return ChoiceChip(
       label: Text('$seconds detik'),
       selected: isSelected,
       onSelected: (_) => onTap(),
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : ink,
+        color: isSelected ? scheme.onPrimary : scheme.onSurface,
         fontSize: 12,
         fontWeight: FontWeight.w800,
       ),
-      backgroundColor: paper,
-      selectedColor: deepBlue,
-      side: BorderSide(color: isSelected ? deepBlue : lineColor),
+      backgroundColor: scheme.surfaceContainerHighest,
+      selectedColor: scheme.primary,
+      side: BorderSide(
+        color: isSelected ? scheme.primary : scheme.outlineVariant,
+      ),
       showCheckmark: false,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
     );

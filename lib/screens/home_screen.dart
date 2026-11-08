@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/quiz_components.dart';
+import 'analytics_screen.dart';
 import 'mode_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,8 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: paper,
+      backgroundColor: scheme.surface,
       body: QuizGameBackground(
         child: SafeArea(
           child: LayoutBuilder(
@@ -54,6 +56,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         children: [
                           const BrandMark(),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const AnalyticsScreen(),
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.insights_rounded,
+                                size: 18,
+                              ),
+                              label: const Text('Analitik'),
+                            ),
+                          ),
                           SizedBox(height: compact ? 28 : 48),
                           _QuizTitleCard(compact: compact),
                           SizedBox(height: compact ? 25 : 34),
@@ -61,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             'Seberapa luas\nwawasanmu?',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: ink,
+                              color: scheme.onSurface,
                               fontSize: compact ? 26 : 31,
                               height: 1.1,
                               letterSpacing: -0.7,
@@ -73,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             'Masukkan namamu, lalu bersiap untuk bermain!',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: mutedInk,
+                              color: scheme.onSurfaceVariant,
                               fontSize: 13,
                               height: 1.4,
                             ),
@@ -86,35 +103,37 @@ class _HomeScreenState extends State<HomeScreen> {
                             onFieldSubmitted: (_) => _continueToModes(),
                             decoration: InputDecoration(
                               hintText: 'Nama pemain',
-                              hintStyle: const TextStyle(color: mutedInk),
-                              prefixIcon: const Icon(
+                              hintStyle: TextStyle(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                              prefixIcon: Icon(
                                 Icons.person_rounded,
-                                color: deepBlue,
+                                color: scheme.primary,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: scheme.surfaceContainer,
                               contentPadding: const EdgeInsets.symmetric(
                                 vertical: 18,
                                 horizontal: 18,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
-                                borderSide: const BorderSide(
-                                  color: lineColor,
+                                borderSide: BorderSide(
+                                  color: scheme.outlineVariant,
                                   width: 1.5,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
-                                borderSide: const BorderSide(
-                                  color: lineColor,
+                                borderSide: BorderSide(
+                                  color: scheme.outlineVariant,
                                   width: 1.5,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
-                                borderSide: const BorderSide(
-                                  color: forest,
+                                borderSide: BorderSide(
+                                  color: scheme.primary,
                                   width: 2,
                                 ),
                               ),
@@ -136,10 +155,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             onPressed: _continueToModes,
                           ),
                           const SizedBox(height: 18),
-                          const Text(
-                            '6 SOAL  ·  BANYAK KESERUAN',
+                          Text(
+                            '30 SOAL  ·  BANYAK KESERUAN',
                             style: TextStyle(
-                              color: mutedInk,
+                              color: scheme.onSurfaceVariant,
                               fontSize: 10,
                               letterSpacing: 1.4,
                               fontWeight: FontWeight.w900,
@@ -166,12 +185,15 @@ class _QuizTitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: compact ? 190 : 230,
-      child: Image.asset(
-        'assets/images/quiz_illustration.png',
-        fit: BoxFit.contain,
-        semanticLabel: 'Ilustrasi kartu quiz berwarna putih dengan doodle',
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 420, maxHeight: 230),
+      child: AspectRatio(
+        aspectRatio: compact ? 1.7 : 2.2,
+        child: Image.asset(
+          'assets/images/quiz_illustration.png',
+          fit: BoxFit.contain,
+          semanticLabel: 'Ilustrasi kartu quiz berwarna putih dengan doodle',
+        ),
       ),
     );
   }

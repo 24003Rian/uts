@@ -1,7 +1,7 @@
 # RuangKuis
 
 Aplikasi kuis pilihan ganda sederhana untuk menguji wawasan seputar Flutter.
-Pemain memasukkan nama, menjawab enam pertanyaan, lalu melihat skor dan
+Pemain memasukkan nama, menjawab hingga tiga puluh pertanyaan, lalu melihat skor dan
 persentase hasilnya.
 
 ## Identitas Mahasiswa

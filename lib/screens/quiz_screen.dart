@@ -54,7 +54,10 @@ class _QuizScreenState extends State<QuizScreen> {
   void _revealCorrectAnswer() {
     if (_isRevealingAnswer) return;
     setState(() => _isRevealingAnswer = true);
-    _timer = Timer(const Duration(milliseconds: 1250), _showResultsAfterTimeout);
+    _timer = Timer(
+      const Duration(milliseconds: 1250),
+      _showResultsAfterTimeout,
+    );
   }
 
   void _showResultsAfterTimeout() {
@@ -108,13 +111,14 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
+    final scheme = Theme.of(context).colorScheme;
     final question = quiz.questions[quiz.currentIndex];
     const optionLabels = ['A', 'B', 'C', 'D'];
     final duration = quiz.questionDurationSeconds;
     final remaining = quiz.remainingQuizSeconds;
 
     return Scaffold(
-      backgroundColor: paper,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: QuizGameBackground(
         child: SafeArea(
           child: LayoutBuilder(
@@ -133,36 +137,37 @@ class _QuizScreenState extends State<QuizScreen> {
                               onPressed: () => Navigator.of(context).pop(),
                               icon: const Icon(Icons.arrow_back_rounded),
                               style: IconButton.styleFrom(
-                                backgroundColor: Colors.white,
+                                backgroundColor: creamSurface,
                                 foregroundColor: ink,
                                 side: const BorderSide(color: lineColor),
                               ),
                             ),
-                            const Spacer(),
-                            const Text(
-                              'RUANG KUIS',
-                              style: TextStyle(
-                                color: ink,
-                                fontSize: 15,
-                                letterSpacing: 1.3,
-                                fontWeight: FontWeight.w800,
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'RUANG KUIS',
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: scheme.onSurface,
+                                  fontSize: 15,
+                                  letterSpacing: 1.3,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ),
-                            const Spacer(),
-                            Container(
-                              width: 42,
-                              height: 42,
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                color: deepBlue,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                '${quiz.currentIndex + 1}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w900,
+                            const SizedBox(width: 8),
+                            CircleAvatar(
+                              backgroundColor: scheme.primary,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '${quiz.currentIndex + 1}',
+                                  style: TextStyle(
+                                    color: scheme.onPrimary,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                               ),
                             ),
@@ -197,8 +202,8 @@ class _QuizScreenState extends State<QuizScreen> {
                                 ),
                                 Text(
                                   'Hai, ${quiz.userName}!',
-                                  style: const TextStyle(
-                                    color: mutedInk,
+                                  style: TextStyle(
+                                    color: scheme.onSurfaceVariant,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w800,
                                   ),
@@ -213,15 +218,17 @@ class _QuizScreenState extends State<QuizScreen> {
                                     22,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: lineColor),
+                                    color: scheme.surfaceContainer,
+                                    border: Border.all(
+                                      color: scheme.outlineVariant,
+                                    ),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     question.questionText,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: ink,
+                                      color: scheme.onSurface,
                                       fontSize: constraints.maxWidth < 380
                                           ? 21
                                           : 24,
@@ -237,7 +244,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                       ? 'Waktu habis! Ini jawaban yang benar.'
                                       : 'Pilih satu jawaban yang paling tepat.',
                                   style: TextStyle(
-                                    color: mutedInk,
+                                    color: scheme.onSurfaceVariant,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -274,6 +281,26 @@ class _QuizScreenState extends State<QuizScreen> {
                                     ),
                                   );
                                 }),
+                                const SizedBox(height: 8),
+                                QuestionNavigator(
+                                  questionCount: quiz.questions.length,
+                                  currentIndex: quiz.currentIndex,
+                                  answeredQuestions: {
+                                    for (
+                                      var index = 0;
+                                      index < quiz.questions.length;
+                                      index++
+                                    )
+                                      if (quiz.answerFor(index) != null) index,
+                                  },
+                                  flaggedQuestions: quiz.flaggedQuestions,
+                                  onQuestionSelected: (index) {
+                                    setState(() => _isRevealingAnswer = false);
+                                    quiz.goToQuestion(index);
+                                  },
+                                  onToggleFlag: () =>
+                                      quiz.toggleFlag(quiz.currentIndex),
+                                ),
                               ],
                             ),
                           ),
@@ -346,7 +373,8 @@ class _CountdownIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUrgent = remaining <= 5;
-    final color = isUrgent ? const Color(0xFFD64545) : forest;
+    final scheme = Theme.of(context).colorScheme;
+    final color = isUrgent ? const Color(0xFFD64545) : scheme.primary;
     return Column(
       children: [
         Row(
@@ -356,7 +384,7 @@ class _CountdownIndicator extends StatelessWidget {
             Text(
               'WAKTU KUIS TERSISA',
               style: TextStyle(
-                color: isUrgent ? color : ink,
+                color: isUrgent ? color : scheme.onSurface,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1,
