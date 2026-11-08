@@ -25,9 +25,10 @@ class ResultScreen extends StatelessWidget {
     final total = quiz.questions.length;
     final percentage = total == 0 ? 0 : (quiz.score / total * 100).round();
     final didWin = percentage >= 50;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: paper,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: QuizGameBackground(
         child: SafeArea(
           child: LayoutBuilder(
@@ -54,13 +55,13 @@ class ResultScreen extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE8EEFF),
+                            color: scheme.primaryContainer,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             'HASIL KUIS',
                             style: TextStyle(
-                              color: deepBlue,
+                              color: scheme.primary,
                               fontSize: 12,
                               letterSpacing: 1,
                               fontWeight: FontWeight.w800,
@@ -85,13 +86,13 @@ class ResultScreen extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE8EEFF),
+                            color: scheme.primaryContainer,
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Text(
                             '$percentage%',
-                            style: const TextStyle(
-                              color: deepBlue,
+                            style: TextStyle(
+                              color: scheme.primary,
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
                             ),
@@ -103,8 +104,8 @@ class ResultScreen extends StatelessWidget {
                               ? 'Bagus sekali,\n${quiz.userName}!'
                               : 'Coba lagi,\n${quiz.userName}!',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: ink,
+                          style: TextStyle(
+                            color: scheme.onSurface,
                             fontSize: 24,
                             height: 1.12,
                             letterSpacing: -0.5,
@@ -115,7 +116,7 @@ class ResultScreen extends StatelessWidget {
                         Text(
                           '${quiz.score} dari $total jawaban benar',
                           style: TextStyle(
-                            color: ink,
+                            color: scheme.onSurface,
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
                           ),
@@ -124,7 +125,10 @@ class ResultScreen extends StatelessWidget {
                         Text(
                           _message(quiz.score, total),
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: mutedInk, fontSize: 12),
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
                         ),
                         SizedBox(height: compact ? 17 : 24),
                         _ResultStats(
@@ -138,7 +142,7 @@ class ResultScreen extends StatelessWidget {
                           child: Text(
                             'RINGKASAN JAWABAN',
                             style: TextStyle(
-                              color: ink,
+                              color: scheme.onSurface,
                               fontSize: 13,
                               letterSpacing: 1,
                               fontWeight: FontWeight.w900,
@@ -218,13 +222,14 @@ class _ResultStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: creamSurface,
+        color: scheme.surfaceContainer,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: lineColor),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(
         children: [
@@ -236,7 +241,7 @@ class _ResultStats extends StatelessWidget {
               icon: Icons.check_circle_rounded,
             ),
           ),
-          Container(width: 1, height: 38, color: lineColor),
+          Container(width: 1, height: 38, color: scheme.outlineVariant),
           Expanded(
             child: _ResultStatTile(
               value: '$incorrect',
@@ -245,7 +250,7 @@ class _ResultStats extends StatelessWidget {
               icon: Icons.cancel_rounded,
             ),
           ),
-          Container(width: 1, height: 38, color: lineColor),
+          Container(width: 1, height: 38, color: scheme.outlineVariant),
           Expanded(
             child: _ResultStatTile(
               value: '$unanswered',
@@ -275,6 +280,7 @@ class _ResultStatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Icon(icon, color: color, size: 18),
@@ -289,8 +295,8 @@ class _ResultStatTile extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(
-            color: mutedInk,
+          style: TextStyle(
+            color: scheme.onSurfaceVariant,
             fontSize: 10,
             fontWeight: FontWeight.w800,
           ),
@@ -315,12 +321,11 @@ class _AnswerReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = isCorrect
-        ? const Color(0xFF168A52)
-        : const Color(0xFFD64545);
+    final scheme = Theme.of(context).colorScheme;
+    final statusColor = isCorrect ? scheme.tertiary : scheme.error;
     final statusBackground = isCorrect
-        ? const Color(0xFFE2F8EA)
-        : const Color(0xFFFFE9E9);
+        ? scheme.tertiaryContainer
+        : scheme.errorContainer;
     final userAnswerText = userAnswer == null
         ? 'Tidak dijawab'
         : question.options[userAnswer!];
@@ -330,9 +335,9 @@ class _AnswerReviewCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: creamSurface,
+        color: scheme.surfaceContainer,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: lineColor),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,6 +380,16 @@ class _AnswerReviewCard extends StatelessWidget {
               fontSize: 13,
               height: 1.4,
               fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            question.explanation,
+            style: TextStyle(
+              color: mutedInk,
+              fontSize: 12,
+              height: 1.4,
+              fontStyle: FontStyle.italic,
             ),
           ),
           const SizedBox(height: 10),
