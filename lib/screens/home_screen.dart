@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  int _avatarIndex = 0;
 
   @override
   void dispose() {
@@ -25,8 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!_formKey.currentState!.validate()) return;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) =>
-            ModeSelectionScreen(playerName: _nameController.text.trim()),
+        builder: (_) => ModeSelectionScreen(
+          playerName: _nameController.text.trim(),
+          avatarIndex: _avatarIndex,
+        ),
       ),
     );
   }
@@ -147,6 +150,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                               return null;
                             },
+                          ),
+                          const SizedBox(height: 18),
+                          AvatarPicker(
+                            selectedIndex: _avatarIndex,
+                            onSelected: (index) =>
+                                setState(() => _avatarIndex = index),
                           ),
                           const SizedBox(height: 16),
                           PrimaryActionButton(

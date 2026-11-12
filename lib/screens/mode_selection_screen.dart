@@ -3,12 +3,18 @@ import 'package:provider/provider.dart';
 
 import '../providers/quiz_provider.dart';
 import '../widgets/quiz_components.dart';
+import 'analytics_screen.dart';
 import 'quiz_screen.dart';
 
 class ModeSelectionScreen extends StatefulWidget {
-  const ModeSelectionScreen({required this.playerName, super.key});
+  const ModeSelectionScreen({
+    required this.playerName,
+    this.avatarIndex = 0,
+    super.key,
+  });
 
   final String playerName;
+  final int avatarIndex;
 
   @override
   State<ModeSelectionScreen> createState() => _ModeSelectionScreenState();
@@ -51,8 +57,11 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
   }
 
   void _openQuiz() {
-    Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (_) => const QuizScreen()));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => QuizScreen(avatarIndex: widget.avatarIndex),
+      ),
+    );
   }
 
   @override
@@ -94,7 +103,13 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const BrandMark(),
+                        Row(
+                          children: [
+                            const BrandMark(),
+                            const Spacer(),
+                            UserAvatar(index: widget.avatarIndex, size: 40),
+                          ],
+                        ),
                         const SizedBox(height: 34),
                         Container(
                           width: double.infinity,
@@ -164,7 +179,6 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 28),
                         Text(
                           'Pilih mode kuis',
                           style: TextStyle(
@@ -283,6 +297,22 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                                     .toList(),
                               ),
                             ],
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: OutlinedButton.icon(
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => AnalyticsScreen(
+                                  playerName: widget.playerName,
+                                  avatarIndex: widget.avatarIndex,
+                                ),
+                              ),
+                            ),
+                            icon: const Icon(Icons.insights_rounded, size: 18),
+                            label: const Text('Dashboard analitik'),
                           ),
                         ),
                         const SizedBox(height: 26),

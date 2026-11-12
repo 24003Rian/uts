@@ -9,7 +9,9 @@ import '../widgets/quiz_components.dart';
 import 'result_screen.dart';
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key});
+  const QuizScreen({this.avatarIndex = 0, super.key});
+
+  final int avatarIndex;
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -81,7 +83,9 @@ class _QuizScreenState extends State<QuizScreen> {
   void _openResults() {
     _timer?.cancel();
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const ResultScreen()),
+      MaterialPageRoute<void>(
+        builder: (_) => ResultScreen(avatarIndex: widget.avatarIndex),
+      ),
     );
   }
 

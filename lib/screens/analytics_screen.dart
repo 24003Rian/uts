@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/quiz_provider.dart';
 import '../widgets/quiz_components.dart';
+import 'mode_selection_screen.dart';
 
 class AnalyticsSnapshot {
   const AnalyticsSnapshot({
@@ -19,6 +22,8 @@ class AnalyticsSnapshot {
 class AnalyticsScreen extends StatelessWidget {
   const AnalyticsScreen({
     super.key,
+    this.playerName = '',
+    this.avatarIndex = 0,
     this.snapshot = const AnalyticsSnapshot(
       progress: [42, 55, 48, 68, 61, 78, 86],
       completedQuizzes: 12,
@@ -27,11 +32,21 @@ class AnalyticsScreen extends StatelessWidget {
     ),
   });
 
+  final String playerName;
+  final int avatarIndex;
   final AnalyticsSnapshot snapshot;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final quiz = context.watch<QuizProvider>();
+    final hasProgress = quiz.completedQuizzes > 0;
+    final analyticsSnapshot = AnalyticsSnapshot(
+      progress: quiz.accuracyHistory,
+      completedQuizzes: quiz.completedQuizzes,
+      accuracy: quiz.accuracy,
+      averageScore: quiz.averageScore,
+    );
     return Scaffold(
       backgroundColor: scheme.surface,
       body: QuizGameBackground(
@@ -39,13 +54,28 @@ class AnalyticsScreen extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final wide = constraints.maxWidth >= 720;
-              final content = [
-                _Header(snapshot: snapshot),
-                const SizedBox(height: 22),
-                _ProgressCard(values: snapshot.progress),
-                const SizedBox(height: 16),
-                _MetricGrid(snapshot: snapshot),
-              ];
+              final content = hasProgress
+                  ? [
+                      _Header(snapshot: analyticsSnapshot),
+                      const SizedBox(height: 22),
+                      _ProgressCard(values: analyticsSnapshot.progress),
+                      const SizedBox(height: 16),
+                      _MetricGrid(snapshot: analyticsSnapshot),
+                    ]
+                  : [
+                      const _Header(snapshot: null),
+                      const SizedBox(height: 22),
+                      _EmptyAnalyticsState(
+                        onSelectMode: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ModeSelectionScreen(
+                              playerName: playerName,
+                              avatarIndex: avatarIndex,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ];
               return Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 920),
@@ -69,7 +99,7 @@ class AnalyticsScreen extends StatelessWidget {
 class _Header extends StatelessWidget {
   const _Header({required this.snapshot});
 
-  final AnalyticsSnapshot snapshot;
+  final AnalyticsSnapshot? snapshot;
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +139,56 @@ class _Header extends StatelessWidget {
         ),
         const BrandMark(compact: true),
       ],
+    );
+  }
+}
+
+class _EmptyAnalyticsState extends StatelessWidget {
+  const _EmptyAnalyticsState({required this.onSelectMode});
+
+  final VoidCallback onSelectMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.analytics_outlined, color: scheme.primary, size: 56),
+          const SizedBox(height: 14),
+          Text(
+            'Belum ada data kuis',
+            style: TextStyle(
+              color: scheme.onSurface,
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Selesaikan satu kuis untuk melihat grafik progres dan statistik performamu.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: scheme.onSurfaceVariant,
+              fontSize: 13,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 20),
+          PrimaryActionButton(
+            label: 'Pilih metode kuis',
+            icon: Icons.tune_rounded,
+            onPressed: onSelectMode,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -190,8 +270,16 @@ class _MetricGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final metrics = [
       ('Kuis selesai', '${snapshot.completedQuizzes}', Icons.task_alt_rounded),
-      ('Tingkat akurasi', '${snapshot.accuracy.round()}%', Icons.ads_click_rounded),
-      ('Rata-rata nilai', '${snapshot.averageScore.round()}', Icons.auto_graph_rounded),
+      (
+        'Tingkat akurasi',
+        '${snapshot.accuracy.round()}%',
+        Icons.ads_click_rounded,
+      ),
+      (
+        'Rata-rata nilai',
+        '${snapshot.averageScore.round()}',
+        Icons.auto_graph_rounded,
+      ),
     ];
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -247,8 +335,18 @@ class _MetricTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(value, style: TextStyle(color: scheme.onSurface, fontSize: 22, fontWeight: FontWeight.w900)),
-              Text(label, style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11)),
+              Text(
+                value,
+                style: TextStyle(
+                  color: scheme.onSurface,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                label,
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11),
+              ),
             ],
           ),
         ],

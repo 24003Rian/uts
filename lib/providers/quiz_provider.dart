@@ -8,6 +8,7 @@ import '../models/question_model.dart';
 class QuizProvider with ChangeNotifier {
   static const int questionLimit = 120;
   static const _progressKey = 'quiz_progress';
+  static const _analyticsKey = 'quiz_analytics';
 
   String _userName = '';
   int _currentIndex = 0;
@@ -16,6 +17,7 @@ class QuizProvider with ChangeNotifier {
   int? _remainingQuizSeconds;
   final Map<int, int> _answers = {};
   final Set<int> _flaggedQuestions = {};
+  final List<double> _accuracyHistory = [];
   List<Question> _questions = dummyQuestions;
 
   QuizProvider() {
@@ -36,11 +38,19 @@ class QuizProvider with ChangeNotifier {
       .where((answer) => questions[answer.key].correctIndex == answer.value)
       .length;
   bool get isComplete => _isComplete;
+  int get completedQuizzes => _accuracyHistory.length;
+  List<double> get accuracyHistory => List.unmodifiable(_accuracyHistory);
+  double get accuracy => _accuracyHistory.isEmpty
+      ? 0
+      : _accuracyHistory.reduce((total, value) => total + value) /
+            _accuracyHistory.length;
+  double get averageScore => accuracy;
   Set<int> get flaggedQuestions => Set.unmodifiable(_flaggedQuestions);
 
   int? answerFor(int questionIndex) => _answers[questionIndex];
 
-  bool isFlagged(int questionIndex) => _flaggedQuestions.contains(questionIndex);
+  bool isFlagged(int questionIndex) =>
+      _flaggedQuestions.contains(questionIndex);
 
   void toggleFlag(int questionIndex) {
     if (questionIndex < 0 || questionIndex >= questions.length) return;
@@ -103,7 +113,7 @@ class QuizProvider with ChangeNotifier {
     _remainingQuizSeconds = remaining > 0 ? remaining - 1 : 0;
     final hasExpired = _remainingQuizSeconds == 0;
     if (hasExpired) {
-      _isComplete = true;
+      _completeQuiz();
     }
     _saveProgress();
     notifyListeners();
@@ -128,12 +138,20 @@ class QuizProvider with ChangeNotifier {
 
   void _advanceQuestion() {
     if (_currentIndex == questions.length - 1) {
-      _isComplete = true;
+      _completeQuiz();
     } else {
       _currentIndex++;
     }
     _saveProgress();
     notifyListeners();
+  }
+
+  void _completeQuiz() {
+    if (_isComplete) return;
+    _isComplete = true;
+    final percentage = questions.isEmpty ? 0.0 : score / questions.length * 100;
+    _accuracyHistory.add(percentage);
+    _saveAnalytics();
   }
 
   void resetQuiz() {
@@ -149,6 +167,21 @@ class QuizProvider with ChangeNotifier {
 
   Future<void> loadPersistedProgress() async {
     final preferences = await SharedPreferences.getInstance();
+    final rawAnalytics = preferences.getString(_analyticsKey);
+    if (rawAnalytics != null && rawAnalytics.isNotEmpty) {
+      final analyticsData = jsonDecode(rawAnalytics);
+      if (analyticsData is Map<String, dynamic>) {
+        _accuracyHistory
+          ..clear()
+          ..addAll(
+            (analyticsData['accuracyHistory'] is List
+                    ? analyticsData['accuracyHistory'] as List
+                    : const <Object?>[])
+                .whereType<num>()
+                .map((value) => value.toDouble()),
+          );
+      }
+    }
     final rawProgress = preferences.getString(_progressKey);
     if (rawProgress == null || rawProgress.isEmpty) return;
 
@@ -162,8 +195,10 @@ class QuizProvider with ChangeNotifier {
     }
 
     _userName = data['userName'] as String? ?? '';
-    _currentIndex = (data['currentIndex'] as int? ?? 0)
-        .clamp(0, questionCount - 1);
+    _currentIndex = (data['currentIndex'] as int? ?? 0).clamp(
+      0,
+      questionCount - 1,
+    );
     _questionDurationSeconds = data['durationSeconds'] as int?;
     _remainingQuizSeconds = data['remainingSeconds'] as int?;
     _isComplete = data['isComplete'] as bool? ?? false;
@@ -208,8 +243,7 @@ class QuizProvider with ChangeNotifier {
         'isComplete': _isComplete,
         'score': score,
         'answers': {
-          for (final entry in _answers.entries)
-            '${entry.key}': entry.value,
+          for (final entry in _answers.entries) '${entry.key}': entry.value,
         },
         'flags': _flaggedQuestions.toList(),
       }),
@@ -219,5 +253,13 @@ class QuizProvider with ChangeNotifier {
   Future<void> _clearPersistedProgress() async {
     final preferences = await SharedPreferences.getInstance();
     await preferences.remove(_progressKey);
+  }
+
+  Future<void> _saveAnalytics() async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setString(
+      _analyticsKey,
+      jsonEncode({'accuracyHistory': _accuracyHistory}),
+    );
   }
 }

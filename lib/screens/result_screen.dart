@@ -4,11 +4,13 @@ import 'package:provider/provider.dart';
 import '../models/question_model.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/quiz_components.dart';
-import 'home_screen.dart';
+import 'mode_selection_screen.dart';
 import 'quiz_screen.dart';
 
 class ResultScreen extends StatelessWidget {
-  const ResultScreen({super.key});
+  const ResultScreen({this.avatarIndex = 0, super.key});
+
+  final int avatarIndex;
 
   String _message(int score, int total) {
     if (score == total) return 'Luar biasa! Semua jawabanmu tepat.';
@@ -44,9 +46,15 @@ class ResultScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        const Align(
+                        Align(
                           alignment: Alignment.centerLeft,
-                          child: BrandMark(),
+                          child: Row(
+                            children: [
+                              const BrandMark(),
+                              const Spacer(),
+                              UserAvatar(index: avatarIndex, size: 44),
+                            ],
+                          ),
                         ),
                         SizedBox(height: compact ? 24 : 42),
                         Container(
@@ -168,16 +176,20 @@ class ResultScreen extends StatelessWidget {
                         const SizedBox(height: 8),
                         TextButton.icon(
                           onPressed: () {
+                            final playerName = quiz.userName;
                             quiz.resetQuiz();
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute<void>(
-                                builder: (_) => const HomeScreen(),
+                                builder: (_) => ModeSelectionScreen(
+                                  playerName: playerName,
+                                  avatarIndex: avatarIndex,
+                                ),
                               ),
                               (route) => false,
                             );
                           },
                           icon: const Icon(Icons.home_outlined),
-                          label: const Text('Kembali ke beranda'),
+                          label: const Text('Kembali ke ruang kuis'),
                           style: TextButton.styleFrom(
                             foregroundColor: mutedInk,
                           ),
@@ -204,7 +216,9 @@ class ResultScreen extends StatelessWidget {
       questionCount: questionCount,
     );
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const QuizScreen()),
+      MaterialPageRoute<void>(
+        builder: (_) => QuizScreen(avatarIndex: avatarIndex),
+      ),
     );
   }
 }

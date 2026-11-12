@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../app_theme.dart';
 
@@ -204,6 +205,97 @@ class BrandMark extends StatelessWidget {
           ),
           visualDensity: VisualDensity.compact,
           color: Theme.of(context).colorScheme.primary,
+        ),
+      ],
+    );
+  }
+}
+
+const avatarOptions = [
+  'assets/images/avatars/avatar_face.svg',
+  'assets/images/avatars/avatar_happy.svg',
+  'assets/images/avatars/avatar_brain.svg',
+  'assets/images/avatars/avatar_rocket.svg',
+  'assets/images/avatars/avatar_star.svg',
+];
+
+class UserAvatar extends StatelessWidget {
+  const UserAvatar({required this.index, super.key, this.size = 46});
+
+  final int index;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final safeIndex = index.clamp(0, avatarOptions.length - 1);
+    return CircleAvatar(
+      radius: size / 2,
+      backgroundColor: scheme.primaryContainer,
+      child: ClipOval(
+        child: SvgPicture.asset(
+          avatarOptions[safeIndex],
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          semanticsLabel: 'Avatar pengguna ${safeIndex + 1}',
+        ),
+      ),
+    );
+  }
+}
+
+class AvatarPicker extends StatelessWidget {
+  const AvatarPicker({
+    required this.selectedIndex,
+    required this.onSelected,
+    super.key,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Pilih avatar',
+          style: TextStyle(
+            color: scheme.onSurface,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 10,
+          children: List.generate(avatarOptions.length, (index) {
+            final selected = index == selectedIndex;
+            return Semantics(
+              button: true,
+              selected: selected,
+              label: 'Avatar ${index + 1}',
+              child: InkWell(
+                onTap: () => onSelected(index),
+                borderRadius: BorderRadius.circular(30),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 160),
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: selected ? scheme.primary : scheme.outlineVariant,
+                      width: selected ? 2.5 : 1,
+                    ),
+                  ),
+                  child: UserAvatar(index: index, size: 42),
+                ),
+              ),
+            );
+          }),
         ),
       ],
     );
