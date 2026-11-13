@@ -63,7 +63,10 @@ flutter run
 Tambahkan screenshot aplikasi setelah dijalankan:
 
 | Beranda | Kuis | Hasil |
-| --- | --- | --- |
+| <img width="770" height="1570" alt="image" src="https://github.com/user-attachments/assets/0f2e2c80-63ac-43e1-9676-2a3451db0d00" />
+| <img width="770" height="1570" alt="image" src="https://github.com/user-attachments/assets/bb57ed6d-5758-4b3f-a378-e184a8c7b2b6" />
+ | <img width="770" height="1570" alt="image" src="https://github.com/user-attachments/assets/2fe47bba-f316-4d40-8f96-76c087303930" />
+ |
 | `docs/screenshots/home.png` | `docs/screenshots/quiz.png` | `docs/screenshots/result.png` |
 
 ### Mockup / Prototype
