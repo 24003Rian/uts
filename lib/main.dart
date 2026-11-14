@@ -6,6 +6,7 @@ import 'providers/quiz_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() {
+  // Menjalankan aplikasi dan menyediakan QuizProvider untuk seluruh widget.
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => QuizProvider())],
@@ -15,8 +16,10 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  // Membuat widget utama aplikasi.
   const MyApp({super.key});
 
+  // Membangun MaterialApp dengan tema yang sedang dipilih pengguna.
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
@@ -34,6 +37,7 @@ class MyApp extends StatelessWidget {
     );
   }
 
+  // Membuat konfigurasi tema terang atau gelap.
   ThemeData _buildTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final scheme = ColorScheme.fromSeed(

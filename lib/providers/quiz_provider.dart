@@ -20,6 +20,7 @@ class QuizProvider with ChangeNotifier {
   final List<double> _accuracyHistory = [];
   List<Question> _questions = dummyQuestions;
 
+  // Membuat provider dan memuat progres kuis yang tersimpan.
   QuizProvider() {
     loadPersistedProgress();
   }
@@ -47,11 +48,14 @@ class QuizProvider with ChangeNotifier {
   double get averageScore => accuracy;
   Set<int> get flaggedQuestions => Set.unmodifiable(_flaggedQuestions);
 
+  // Mengambil jawaban pengguna untuk indeks soal tertentu.
   int? answerFor(int questionIndex) => _answers[questionIndex];
 
+  // Mengecek apakah soal tertentu ditandai sebagai ragu-ragu.
   bool isFlagged(int questionIndex) =>
       _flaggedQuestions.contains(questionIndex);
 
+  // Menambah atau menghapus tanda ragu-ragu pada soal.
   void toggleFlag(int questionIndex) {
     if (questionIndex < 0 || questionIndex >= questions.length) return;
     if (!_flaggedQuestions.add(questionIndex)) {
@@ -61,6 +65,7 @@ class QuizProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Berpindah ke soal lain dan menyimpan posisi terakhir.
   void goToQuestion(int questionIndex) {
     if (questionIndex < 0 || questionIndex >= questions.length) return;
     _currentIndex = questionIndex;
@@ -68,16 +73,19 @@ class QuizProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Mengecek apakah jawaban pengguna pada soal benar.
   bool isAnswerCorrect(int questionIndex) {
     final answer = answerFor(questionIndex);
     return answer != null && questions[questionIndex].correctIndex == answer;
   }
 
+  // Menyimpan nama pemain setelah menghapus spasi di sekitarnya.
   void setUserName(String name) {
     _userName = name.trim();
     notifyListeners();
   }
 
+  // Menginisialisasi kuis baru dengan mode dan jumlah soal yang dipilih.
   void startQuiz({
     required String name,
     int? durationSeconds,
@@ -106,6 +114,7 @@ class QuizProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Mengurangi waktu kuis dan menyelesaikan kuis saat waktu habis.
   bool tickQuizTimer() {
     final remaining = _remainingQuizSeconds;
     if (remaining == null || _isComplete) return false;
@@ -120,6 +129,7 @@ class QuizProvider with ChangeNotifier {
     return hasExpired;
   }
 
+  // Menyimpan jawaban untuk soal yang sedang aktif.
   void selectAnswer(int selectedIndex) {
     if (isComplete ||
         selectedIndex < 0 ||
@@ -131,11 +141,13 @@ class QuizProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Melanjutkan ke soal berikutnya jika soal saat ini sudah dijawab.
   void nextQuestion() {
     if (selectedAnswer == null || isComplete) return;
     _advanceQuestion();
   }
 
+  // Berpindah ke soal berikutnya atau menyelesaikan kuis.
   void _advanceQuestion() {
     if (_currentIndex == questions.length - 1) {
       _completeQuiz();
@@ -146,6 +158,7 @@ class QuizProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Menandai kuis selesai dan mencatat persentase hasilnya.
   void _completeQuiz() {
     if (_isComplete) return;
     _isComplete = true;
@@ -154,6 +167,7 @@ class QuizProvider with ChangeNotifier {
     _saveAnalytics();
   }
 
+  // Menghapus sesi kuis aktif dan progres tersimpan.
   void resetQuiz() {
     _answers.clear();
     _flaggedQuestions.clear();
@@ -165,6 +179,7 @@ class QuizProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Memuat progres dan riwayat analitik dari penyimpanan lokal.
   Future<void> loadPersistedProgress() async {
     final preferences = await SharedPreferences.getInstance();
     final rawAnalytics = preferences.getString(_analyticsKey);
@@ -221,6 +236,7 @@ class QuizProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Mengubah map dinamis dari JSON menjadi map indeks jawaban bertipe integer.
   Map<int, int> _decodeIntMap(Object? value) {
     if (value is! Map) return {};
     return {
@@ -230,6 +246,7 @@ class QuizProvider with ChangeNotifier {
     };
   }
 
+  // Menyimpan kondisi kuis aktif ke penyimpanan lokal.
   Future<void> _saveProgress() async {
     final preferences = await SharedPreferences.getInstance();
     await preferences.setString(
@@ -250,11 +267,13 @@ class QuizProvider with ChangeNotifier {
     );
   }
 
+  // Menghapus progres kuis aktif dari penyimpanan lokal.
   Future<void> _clearPersistedProgress() async {
     final preferences = await SharedPreferences.getInstance();
     await preferences.remove(_progressKey);
   }
 
+  // Menyimpan riwayat akurasi kuis ke penyimpanan lokal.
   Future<void> _saveAnalytics() async {
     final preferences = await SharedPreferences.getInstance();
     await preferences.setString(

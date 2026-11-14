@@ -8,10 +8,12 @@ import 'mode_selection_screen.dart';
 import 'quiz_screen.dart';
 
 class ResultScreen extends StatelessWidget {
+  // Membuat halaman hasil kuis.
   const ResultScreen({this.avatarIndex = 0, super.key});
 
   final int avatarIndex;
 
+  // Menghasilkan pesan berdasarkan skor pengguna.
   String _message(int score, int total) {
     if (score == total) return 'Luar biasa! Semua jawabanmu tepat.';
     if (score >= (total * 0.7).ceil()) return 'Keren, wawasanmu sudah kuat!';
@@ -22,6 +24,7 @@ class ResultScreen extends StatelessWidget {
   }
 
   @override
+  // Membangun ringkasan hasil dan daftar jawaban kuis.
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
     final total = quiz.questions.length;
@@ -206,6 +209,7 @@ class ResultScreen extends StatelessWidget {
     );
   }
 
+  // Memulai ulang kuis dengan konfigurasi yang sama.
   void _restartQuiz(BuildContext context, QuizProvider quiz) {
     final playerName = quiz.userName;
     final durationSeconds = quiz.questionDurationSeconds;
@@ -224,6 +228,7 @@ class ResultScreen extends StatelessWidget {
 }
 
 class _ResultStats extends StatelessWidget {
+  // Membuat panel ringkasan jawaban benar, salah, dan kosong.
   const _ResultStats({
     required this.correct,
     required this.incorrect,
@@ -235,6 +240,7 @@ class _ResultStats extends StatelessWidget {
   final int unanswered;
 
   @override
+  // Menampilkan tiga statistik hasil dalam satu baris.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
@@ -280,6 +286,7 @@ class _ResultStats extends StatelessWidget {
 }
 
 class _ResultStatTile extends StatelessWidget {
+  // Membuat satu tile statistik hasil.
   const _ResultStatTile({
     required this.value,
     required this.label,
@@ -293,6 +300,7 @@ class _ResultStatTile extends StatelessWidget {
   final IconData icon;
 
   @override
+  // Menampilkan ikon, angka, dan label statistik.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Column(
@@ -321,6 +329,7 @@ class _ResultStatTile extends StatelessWidget {
 }
 
 class _AnswerReviewCard extends StatelessWidget {
+  // Membuat kartu ulasan untuk satu jawaban pengguna.
   const _AnswerReviewCard({
     required this.index,
     required this.question,
@@ -334,6 +343,7 @@ class _AnswerReviewCard extends StatelessWidget {
   final bool isCorrect;
 
   @override
+  // Menampilkan soal, status jawaban, penjelasan, dan jawaban benar.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final statusColor = isCorrect ? scheme.tertiary : scheme.error;
@@ -427,6 +437,7 @@ class _AnswerReviewCard extends StatelessWidget {
 }
 
 class _ReviewAnswerLine extends StatelessWidget {
+  // Membuat baris teks untuk jawaban pengguna atau jawaban benar.
   const _ReviewAnswerLine({
     required this.label,
     required this.value,
@@ -438,6 +449,7 @@ class _ReviewAnswerLine extends StatelessWidget {
   final Color color;
 
   @override
+  // Menampilkan label dan nilai jawaban dengan warna status.
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(

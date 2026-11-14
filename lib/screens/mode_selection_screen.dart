@@ -7,6 +7,7 @@ import 'analytics_screen.dart';
 import 'quiz_screen.dart';
 
 class ModeSelectionScreen extends StatefulWidget {
+  // Membuat halaman untuk memilih mode dan jumlah soal kuis.
   const ModeSelectionScreen({
     required this.playerName,
     this.avatarIndex = 0,
@@ -17,18 +18,21 @@ class ModeSelectionScreen extends StatefulWidget {
   final int avatarIndex;
 
   @override
+  // Membuat state pemilihan mode.
   State<ModeSelectionScreen> createState() => _ModeSelectionScreenState();
 }
 
 class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
   int? _selectedDurationSeconds;
 
+  // Mengecek apakah kuis tersimpan dapat dilanjutkan.
   bool _canResume(QuizProvider quiz) =>
       quiz.userName == widget.playerName &&
       quiz.questionDurationSeconds == _selectedDurationSeconds &&
       quiz.answeredCount > 0 &&
       !quiz.isComplete;
 
+  // Memulai kuis baru atau melanjutkan kuis yang tersimpan.
   Future<void> _startQuiz() async {
     final quiz = context.read<QuizProvider>();
     if (_canResume(quiz)) {
@@ -47,6 +51,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
     _openQuiz();
   }
 
+  // Menampilkan dialog untuk memilih jumlah soal.
   Future<int?> _askQuestionCount(QuizProvider quiz) async {
     return showDialog<int>(
       context: context,
@@ -56,6 +61,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
     );
   }
 
+  // Membuka halaman pengerjaan kuis.
   void _openQuiz() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -65,6 +71,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
   }
 
   @override
+  // Membangun tampilan pemilihan mode kuis.
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
     final canResume = _canResume(quiz);
@@ -345,11 +352,13 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
 }
 
 class _QuestionCountDialog extends StatefulWidget {
+  // Membuat dialog pemilihan jumlah soal.
   const _QuestionCountDialog({required this.availableQuestionCount});
 
   final int availableQuestionCount;
 
   @override
+  // Membuat state dialog jumlah soal.
   State<_QuestionCountDialog> createState() => _QuestionCountDialogState();
 }
 
@@ -362,17 +371,20 @@ class _QuestionCountDialogState extends State<_QuestionCountDialog> {
   );
 
   @override
+  // Membersihkan controller input jumlah soal.
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
+  // Memvalidasi input dan mengubahnya menjadi jumlah soal.
   int? _validatedCount() {
     if (!_formKey.currentState!.validate()) return null;
     return int.parse(_controller.text.trim());
   }
 
   @override
+  // Membangun dialog jumlah soal beserta validasinya.
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Mau mengerjakan berapa soal?'),
@@ -442,6 +454,7 @@ class _QuestionCountDialogState extends State<_QuestionCountDialog> {
 }
 
 class _ModeCard extends StatelessWidget {
+  // Membuat kartu pilihan mode kuis tanpa batas waktu.
   const _ModeCard({
     required this.title,
     required this.subtitle,
@@ -459,6 +472,7 @@ class _ModeCard extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  // Menampilkan kartu mode dengan status pilihan pengguna.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Material(
@@ -538,6 +552,7 @@ class _ModeCard extends StatelessWidget {
 }
 
 class _DurationChoice extends StatelessWidget {
+  // Membuat chip pilihan durasi kuis.
   const _DurationChoice({
     required this.seconds,
     required this.isSelected,
@@ -549,6 +564,7 @@ class _DurationChoice extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  // Menampilkan chip durasi dan status terpilihnya.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return ChoiceChip(

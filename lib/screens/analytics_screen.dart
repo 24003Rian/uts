@@ -6,6 +6,7 @@ import '../widgets/quiz_components.dart';
 import 'mode_selection_screen.dart';
 
 class AnalyticsSnapshot {
+  // Membuat snapshot statistik kuis untuk ditampilkan pada dashboard.
   const AnalyticsSnapshot({
     required this.progress,
     required this.completedQuizzes,
@@ -37,6 +38,7 @@ class AnalyticsScreen extends StatelessWidget {
   final AnalyticsSnapshot snapshot;
 
   @override
+  // Membangun dashboard analitik atau keadaan kosong jika belum ada hasil.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final quiz = context.watch<QuizProvider>();
@@ -97,11 +99,13 @@ class AnalyticsScreen extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
+  // Membuat header dashboard analitik.
   const _Header({required this.snapshot});
 
   final AnalyticsSnapshot? snapshot;
 
   @override
+  // Menampilkan tombol kembali, judul dashboard, dan logo aplikasi.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Row(
@@ -144,11 +148,13 @@ class _Header extends StatelessWidget {
 }
 
 class _EmptyAnalyticsState extends StatelessWidget {
+  // Membuat tampilan ketika pengguna belum menyelesaikan kuis.
   const _EmptyAnalyticsState({required this.onSelectMode});
 
   final VoidCallback onSelectMode;
 
   @override
+  // Menampilkan pesan kosong dan tombol untuk memilih mode kuis.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
@@ -194,11 +200,13 @@ class _EmptyAnalyticsState extends StatelessWidget {
 }
 
 class _ProgressCard extends StatelessWidget {
+  // Membuat kartu grafik progres akurasi.
   const _ProgressCard({required this.values});
 
   final List<double> values;
 
   @override
+  // Menampilkan grafik dan label progres kuis.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
@@ -262,11 +270,13 @@ class _ProgressCard extends StatelessWidget {
 }
 
 class _MetricGrid extends StatelessWidget {
+  // Membuat grid metrik statistik kuis.
   const _MetricGrid({required this.snapshot});
 
   final AnalyticsSnapshot snapshot;
 
   @override
+  // Menentukan jumlah kolom dan menampilkan setiap metrik.
   Widget build(BuildContext context) {
     final metrics = [
       ('Kuis selesai', '${snapshot.completedQuizzes}', Icons.task_alt_rounded),
@@ -307,6 +317,7 @@ class _MetricGrid extends StatelessWidget {
 }
 
 class _MetricTile extends StatelessWidget {
+  // Membuat satu tile untuk nilai statistik.
   const _MetricTile({
     required this.label,
     required this.value,
@@ -318,6 +329,7 @@ class _MetricTile extends StatelessWidget {
   final IconData icon;
 
   @override
+  // Menampilkan ikon, nilai, dan label statistik.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
@@ -356,6 +368,7 @@ class _MetricTile extends StatelessWidget {
 }
 
 class _ProgressChartPainter extends CustomPainter {
+  // Membuat painter untuk menggambar grafik garis progres.
   const _ProgressChartPainter({
     required this.values,
     required this.lineColor,
@@ -367,6 +380,7 @@ class _ProgressChartPainter extends CustomPainter {
   final Color gridColor;
 
   @override
+  // Menggambar garis grid, grafik, dan titik nilai progres.
   void paint(Canvas canvas, Size size) {
     if (values.isEmpty) return;
     final grid = Paint()
@@ -402,6 +416,7 @@ class _ProgressChartPainter extends CustomPainter {
   }
 
   @override
+  // Menentukan apakah grafik perlu digambar ulang saat data berubah.
   bool shouldRepaint(covariant _ProgressChartPainter oldDelegate) =>
       oldDelegate.values != values ||
       oldDelegate.lineColor != lineColor ||

@@ -14,11 +14,13 @@ const Color lineColor = Color(0xFFE8DDC7);
 const Color deepBlue = forest;
 
 class QuizGameBackground extends StatelessWidget {
+  // Membuat latar belakang dekoratif untuk seluruh halaman kuis.
   const QuizGameBackground({required this.child, super.key});
 
   final Widget child;
 
   @override
+  // Menampilkan child di atas latar belakang scrapbook.
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: _ScrapbookBackgroundPainter(
@@ -30,11 +32,13 @@ class QuizGameBackground extends StatelessWidget {
 }
 
 class _ScrapbookBackgroundPainter extends CustomPainter {
+  // Membuat painter latar belakang dengan warna sesuai mode tema.
   const _ScrapbookBackgroundPainter({required this.isDark});
 
   final bool isDark;
 
   @override
+  // Menggambar kertas, grid, dekorasi, gelombang, dan bintang.
   void paint(Canvas canvas, Size size) {
     final navy = isDark ? const Color(0xFF0D1A2B) : const Color(0xFF214F78);
     final paperColor = isDark
@@ -134,6 +138,7 @@ class _ScrapbookBackgroundPainter extends CustomPainter {
     _drawStar(canvas, Offset(size.width * .87, size.height * .9), 20, stars);
   }
 
+  // Menggambar bentuk bintang pada posisi dan ukuran tertentu.
   void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
     final path = Path();
     for (var index = 0; index < 10; index++) {
@@ -154,16 +159,19 @@ class _ScrapbookBackgroundPainter extends CustomPainter {
   }
 
   @override
+  // Menggambar ulang latar hanya jika mode gelap berubah.
   bool shouldRepaint(covariant _ScrapbookBackgroundPainter oldDelegate) =>
       oldDelegate.isDark != isDark;
 }
 
 class BrandMark extends StatelessWidget {
+  // Membuat logo aplikasi beserta tombol pergantian tema.
   const BrandMark({super.key, this.compact = false});
 
   final bool compact;
 
   @override
+  // Menampilkan ikon, nama aplikasi, dan kontrol tema.
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -220,12 +228,14 @@ const avatarOptions = [
 ];
 
 class UserAvatar extends StatelessWidget {
+  // Membuat avatar pengguna berdasarkan indeks aset avatar.
   const UserAvatar({required this.index, super.key, this.size = 46});
 
   final int index;
   final double size;
 
   @override
+  // Menampilkan aset avatar dalam bentuk lingkaran.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final safeIndex = index.clamp(0, avatarOptions.length - 1);
@@ -246,6 +256,7 @@ class UserAvatar extends StatelessWidget {
 }
 
 class AvatarPicker extends StatelessWidget {
+  // Membuat pemilih avatar yang dapat ditekan pengguna.
   const AvatarPicker({
     required this.selectedIndex,
     required this.onSelected,
@@ -256,6 +267,7 @@ class AvatarPicker extends StatelessWidget {
   final ValueChanged<int> onSelected;
 
   @override
+  // Menampilkan seluruh pilihan avatar dan status pilihan aktif.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Column(
@@ -303,6 +315,7 @@ class AvatarPicker extends StatelessWidget {
 }
 
 class PrimaryActionButton extends StatelessWidget {
+  // Membuat tombol aksi utama yang konsisten di seluruh aplikasi.
   const PrimaryActionButton({
     required this.label,
     required this.onPressed,
@@ -315,6 +328,7 @@ class PrimaryActionButton extends StatelessWidget {
   final IconData icon;
 
   @override
+  // Menampilkan tombol penuh dengan label dan ikon.
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
@@ -355,6 +369,7 @@ class PrimaryActionButton extends StatelessWidget {
 }
 
 class QuizProgressHeader extends StatelessWidget {
+  // Membuat header yang menunjukkan posisi pengguna dalam kuis.
   const QuizProgressHeader({
     required this.current,
     required this.total,
@@ -365,6 +380,7 @@ class QuizProgressHeader extends StatelessWidget {
   final int total;
 
   @override
+  // Menampilkan nomor soal dan progress bar kuis.
   Widget build(BuildContext context) {
     final progress = total == 0 ? 0.0 : current / total;
     final scheme = Theme.of(context).colorScheme;
@@ -420,6 +436,7 @@ class QuizProgressHeader extends StatelessWidget {
 }
 
 class AnswerOptionCard extends StatelessWidget {
+  // Membuat kartu pilihan jawaban dengan status terpilih atau benar.
   const AnswerOptionCard({
     required this.label,
     required this.text,
@@ -436,6 +453,7 @@ class AnswerOptionCard extends StatelessWidget {
   final bool isCorrect;
 
   @override
+  // Menampilkan pilihan jawaban yang dapat dipilih pengguna.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final accentColor = isCorrect ? const Color(0xFF168A52) : scheme.primary;
@@ -522,6 +540,7 @@ class AnswerOptionCard extends StatelessWidget {
 }
 
 class QuestionNavigator extends StatelessWidget {
+  // Membuat navigasi cepat antarsoal dan kontrol tanda ragu-ragu.
   const QuestionNavigator({
     required this.questionCount,
     required this.currentIndex,
@@ -540,6 +559,7 @@ class QuestionNavigator extends StatelessWidget {
   final VoidCallback onToggleFlag;
 
   @override
+  // Menampilkan nomor soal beserta status jawabannya.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Container(

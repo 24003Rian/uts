@@ -5,8 +5,10 @@ import 'analytics_screen.dart';
 import 'mode_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  // Membuat halaman awal untuk memasukkan nama dan memilih avatar.
   const HomeScreen({super.key});
 
+  // Membuat state halaman awal.
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -17,11 +19,13 @@ class _HomeScreenState extends State<HomeScreen> {
   int _avatarIndex = 0;
 
   @override
+  // Membersihkan controller nama saat halaman dihapus.
   void dispose() {
     _nameController.dispose();
     super.dispose();
   }
 
+  // Memvalidasi nama lalu membuka halaman pemilihan mode kuis.
   void _continueToModes() {
     if (!_formKey.currentState!.validate()) return;
     Navigator.of(context).push(
@@ -35,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  // Membangun tampilan halaman awal.
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
@@ -188,11 +193,13 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _QuizTitleCard extends StatelessWidget {
+  // Membuat kartu ilustrasi judul kuis.
   const _QuizTitleCard({required this.compact});
 
   final bool compact;
 
   @override
+  // Menampilkan ilustrasi kuis dengan ukuran responsif.
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 420, maxHeight: 230),

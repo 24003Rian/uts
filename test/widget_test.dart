@@ -13,6 +13,7 @@ import 'package:quiz_app/models/question_model.dart';
 import 'package:quiz_app/providers/quiz_provider.dart';
 
 void main() {
+  // Menjalankan seluruh pengujian widget aplikasi.
   testWidgets('home adapts to a narrow mobile viewport', (
     WidgetTester tester,
   ) async {

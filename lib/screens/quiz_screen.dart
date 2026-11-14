@@ -9,11 +9,13 @@ import '../widgets/quiz_components.dart';
 import 'result_screen.dart';
 
 class QuizScreen extends StatefulWidget {
+  // Membuat halaman pengerjaan kuis.
   const QuizScreen({this.avatarIndex = 0, super.key});
 
   final int avatarIndex;
 
   @override
+  // Membuat state halaman pengerjaan kuis.
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
@@ -22,17 +24,20 @@ class _QuizScreenState extends State<QuizScreen> {
   bool _isRevealingAnswer = false;
 
   @override
+  // Memulai timer setelah widget selesai dirender.
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _startQuizTimer());
   }
 
   @override
+  // Membatalkan timer saat halaman ditutup.
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
 
+  // Menjalankan timer kuis jika mode yang dipilih memiliki batas waktu.
   void _startQuizTimer() {
     _timer?.cancel();
     final quiz = context.read<QuizProvider>();
@@ -53,6 +58,7 @@ class _QuizScreenState extends State<QuizScreen> {
     });
   }
 
+  // Menampilkan jawaban benar sementara ketika waktu kuis habis.
   void _revealCorrectAnswer() {
     if (_isRevealingAnswer) return;
     setState(() => _isRevealingAnswer = true);
@@ -62,11 +68,13 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
+  // Membuka halaman hasil setelah animasi jawaban selesai.
   void _showResultsAfterTimeout() {
     if (!mounted) return;
     _openResults();
   }
 
+  // Memproses tombol lanjut untuk pindah atau melihat hasil kuis.
   void _continue() {
     if (_isRevealingAnswer) return;
     final quiz = context.read<QuizProvider>();
@@ -80,6 +88,7 @@ class _QuizScreenState extends State<QuizScreen> {
     setState(() => _isRevealingAnswer = false);
   }
 
+  // Menghentikan timer dan mengganti halaman ke hasil kuis.
   void _openResults() {
     _timer?.cancel();
     Navigator.of(context).pushReplacement(
@@ -89,6 +98,7 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
+  // Membuat animasi perpindahan antarpertanyaan dengan efek gelombang.
   Widget _questionSwapTransition(Widget child, Animation<double> animation) {
     final easedAnimation = CurvedAnimation(
       parent: animation,
@@ -113,6 +123,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   @override
+  // Membangun tampilan soal, pilihan jawaban, timer, dan navigasi.
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
     final scheme = Theme.of(context).colorScheme;
@@ -335,11 +346,13 @@ class _QuizScreenState extends State<QuizScreen> {
 }
 
 class _WaveRevealClipper extends CustomClipper<Path> {
+  // Membuat clipper untuk efek gelombang saat soal berganti.
   const _WaveRevealClipper({required this.progress});
 
   final double progress;
 
   @override
+  // Menghasilkan area clip berbentuk gelombang sesuai progres animasi.
   Path getClip(Size size) {
     final normalizedProgress = progress.clamp(0.0, 1.0);
     final revealHeight = size.height * normalizedProgress;
@@ -364,17 +377,20 @@ class _WaveRevealClipper extends CustomClipper<Path> {
   }
 
   @override
+  // Menentukan apakah clipper perlu dihitung ulang.
   bool shouldReclip(covariant _WaveRevealClipper oldClipper) =>
       oldClipper.progress != progress;
 }
 
 class _CountdownIndicator extends StatelessWidget {
+  // Membuat indikator sisa waktu kuis.
   const _CountdownIndicator({required this.remaining, required this.duration});
 
   final int remaining;
   final int duration;
 
   @override
+  // Menampilkan sisa detik dan progress bar timer.
   Widget build(BuildContext context) {
     final isUrgent = remaining <= 5;
     final scheme = Theme.of(context).colorScheme;

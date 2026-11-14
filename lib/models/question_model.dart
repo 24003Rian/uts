@@ -4,6 +4,7 @@ class Question {
   final int correctIndex;
   final String explanation;
 
+  // Membuat satu data soal beserta pilihan, jawaban benar, dan penjelasan.
   Question({
     required this.questionText,
     required this.options,
