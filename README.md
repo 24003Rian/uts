@@ -6,9 +6,9 @@ persentase hasilnya.
 
 ## Identitas Mahasiswa
 
-- Nama: **Isi nama**
-- NIM: **Isi NIM**
-- Lab: **Isi lab**
+- Nama: **Rian Ansari**
+- NIM: **241401003**
+- Lab: **pmob6**
 
 ## Fitur
 
@@ -63,19 +63,10 @@ flutter run
 Tambahkan screenshot aplikasi setelah dijalankan:
 
 | Beranda | Kuis | Hasil |
-| --- | --- | --- |
-| `docs/screenshots/home.png` | `docs/screenshots/quiz.png` | `docs/screenshots/result.png` |
+| <img width="770" height="1570" alt="image" src="https://github.com/user-attachments/assets/0f2e2c80-63ac-43e1-9676-2a3451db0d00" />
+| <img width="770" height="1570" alt="image" src="https://github.com/user-attachments/assets/bb57ed6d-5758-4b3f-a378-e184a8c7b2b6" />
+ | <img width="770" height="1570" alt="image" src="https://github.com/user-attachments/assets/2fe47bba-f316-4d40-8f96-76c087303930" />
+ 
 
-### Mockup / Prototype
 
-- Link: **Tambahkan tautan Figma atau prototype di sini**
 
-## Rencana Demo Presentasi (5 Menit)
-
-1. **0:00–0:45** — Perkenalkan tujuan dan tampilan halaman beranda.
-2. **0:45–1:30** — Masukkan nama, pilih mode kuis, lalu mulai.
-3. **1:30–3:00** — Jawab beberapa soal dan perlihatkan progres serta pilihan
-   yang tetap tersimpan saat berpindah halaman atau orientasi.
-4. **3:00–3:45** — Selesaikan kuis dan jelaskan skor pada halaman hasil.
-5. **3:45–5:00** — Tunjukkan layout di ukuran layar berbeda dan jelaskan struktur
-   model, provider, screen, serta reusable widget.
